@@ -1,126 +1,298 @@
 /* ========================================================
-   GAME SHOWCASE - ULTRA REFINED THEME (OBSIDIAN & NEON)
+   CONSOLE THEME: VIBRANT SAPPHIRE & CYBER-NEON (DARK / LIGHT)
    ======================================================== */
 
 :root {
-  --bg-deep: #090a10;
-  --surface-card: rgba(18, 21, 33, 0.75);
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-glow: rgba(99, 102, 241, 0.35);
-  --accent-cyan: #06b6d4;
-  --accent-violet: #8b5cf6;
-  --accent-gold: #fbbf24;
+  /* Modo Oscuro: Azul Zafiro Profundo, Vivo y Eléctrico */
+  --bg-deep: #0b1124;
+  --nav-bg: rgba(16, 26, 54, 0.88);
+  --panel-bg: rgba(20, 32, 65, 0.78);
+  --input-bg: rgba(11, 18, 38, 0.88);
+  --border-light: rgba(56, 189, 248, 0.18);
+  --border-glow: rgba(56, 189, 248, 0.55);
+  --accent-cyan: #38bdf8;
+  --accent-blue: #3b82f6;
+  --accent-purple: #a855f7;
+  --text-primary: #ffffff;
+}
+
+body.light-mode {
+  --bg-deep: #f1f5f9;
+  --nav-bg: rgba(255, 255, 255, 0.95);
+  --panel-bg: #ffffff;
+  --input-bg: #f8fafc;
+  --border-light: rgba(203, 213, 225, 0.8);
+  --border-glow: rgba(99, 102, 241, 0.2);
+  --text-primary: #0f172a;
+}
+
+.console-font {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
 }
 
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
   background-color: var(--bg-deep);
+  /* Malla ambiental con azules eléctricos y cian más presentes */
   background-image: 
-    radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
-    radial-gradient(at 85% 20%, rgba(6, 182, 212, 0.08) 0px, transparent 45%),
-    radial-gradient(at 50% 90%, rgba(139, 92, 246, 0.1) 0px, transparent 60%);
+    radial-gradient(circle at 15% 10%, rgba(59, 130, 246, 0.38) 0%, transparent 48%),
+    radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.32) 0%, transparent 45%),
+    radial-gradient(circle at 50% 65%, rgba(99, 102, 241, 0.28) 0%, transparent 52%),
+    radial-gradient(circle at 25% 95%, rgba(14, 165, 233, 0.24) 0%, transparent 45%),
+    linear-gradient(rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.04) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px;
   background-attachment: fixed;
-  color: #e2e8f0;
+  color: #f1f5f9;
   min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Glassmorphism Refinado */
-.glass {
-  background: rgba(15, 18, 28, 0.78);
+body.light-mode {
+  color: #0f172a;
+  background-image: 
+    radial-gradient(circle at 15% 10%, rgba(99, 102, 241, 0.1) 0%, transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
+    linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+}
+
+/* 1. Barra de Navegación */
+.console-nav {
+  background: var(--nav-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-light);
+  border-top: 1px solid rgba(125, 211, 252, 0.35);
+  box-shadow: 0 10px 30px -10px rgba(11, 17, 36, 0.7);
+}
+
+/* 2. Bento Hero & Panels */
+.console-hero {
+  background: linear-gradient(135deg, rgba(24, 38, 77, 0.95), rgba(13, 21, 46, 0.98));
+  border: 1px solid var(--border-light);
+  border-top: 1px solid rgba(125, 211, 252, 0.4);
+  box-shadow: 0 20px 45px -15px rgba(2, 6, 23, 0.75), 0 0 25px -8px rgba(56, 189, 248, 0.18);
+}
+
+/* Corrección para Modo Claro en el Hero */
+body.light-mode .console-hero {
+  background: linear-gradient(135deg, #ffffff, #f8fafc) !important;
+  border-color: rgba(203, 213, 225, 0.8) !important;
+  border-top-color: #ffffff !important;
+  box-shadow: 0 15px 35px -10px rgba(15, 23, 42, 0.08) !important;
+}
+
+body.light-mode .console-hero .from-\[\#07090e\] {
+  --tw-gradient-from: rgba(255, 255, 255, 0.96) var(--tw-gradient-from-position) !important;
+}
+
+body.light-mode .console-hero .via-\[\#07090e\]\/85 {
+  --tw-gradient-stops: var(--tw-gradient-from), rgba(255, 255, 255, 0.88) var(--tw-gradient-via-position), var(--tw-gradient-to) !important;
+}
+
+body.light-mode .console-hero h2,
+body.light-mode #npTitle {
+  color: #0f172a !important;
+}
+
+body.light-mode #npMeta {
+  color: #475569 !important;
+}
+
+body.light-mode #npActionBtn {
+  background: #ffedd5 !important;
+  border-color: #fdba74 !important;
+  color: #c2410c !important;
+}
+
+/* 3. Paneles Generales */
+.glass-panel {
+  background: var(--panel-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-subtle);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border-light);
+  border-top: 1px solid rgba(125, 211, 252, 0.28);
+  box-shadow: 0 12px 30px -10px rgba(7, 12, 28, 0.65);
+  transition: all 0.28s ease;
 }
 
-.glass-card {
-  background: var(--surface-card);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--border-subtle);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+body.light-mode .glass-panel {
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06);
 }
 
-/* Efecto Hover en las Tarjetas de Juego */
-.game-card-hover {
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.3s ease;
+/* 4. Inputs y Cajas Interiores */
+.console-input {
+  background: var(--input-bg) !important;
+  border: 1px solid var(--border-light) !important;
+  box-shadow: inset 0 2px 6px rgba(4, 8, 20, 0.55);
 }
 
-.game-card-hover:hover {
-  transform: translateY(-8px) scale(1.02);
-  border-color: rgba(129, 140, 248, 0.45);
-  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.7), 0 0 25px -5px rgba(99, 102, 241, 0.25);
+body.light-mode .console-input {
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-/* Insignias de Estado con Acabado Neón Sutil */
-.badge-playing {
-  background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(239, 68, 68, 0.15));
-  border: 1px solid rgba(249, 115, 22, 0.55);
-  color: #fdba74;
-  box-shadow: 0 0 12px rgba(249, 115, 22, 0.25);
+/* 5. Botón de Acción Neón Principal */
+.btn-primary-action {
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border: 1px solid rgba(147, 197, 253, 0.4);
+  color: #ffffff;
+  box-shadow: 0 6px 22px -4px rgba(37, 99, 235, 0.65);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.badge-platinum {
-  background: linear-gradient(135deg, rgba(234, 179, 8, 0.22), rgba(217, 119, 6, 0.15));
-  border: 1px solid rgba(251, 191, 36, 0.6);
-  color: #fde047;
-  box-shadow: 0 0 16px rgba(234, 179, 8, 0.3);
+.btn-primary-action:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 10px 28px -4px rgba(59, 130, 246, 0.85);
 }
 
-.badge-completed {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.12));
-  border: 1px solid rgba(16, 185, 129, 0.5);
-  color: #6ee7b7;
+/* 6. Tarjetas 3D en la Galería */
+.perspective-container {
+  perspective: 1200px;
 }
 
-.badge-extras {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.15));
-  border: 1px solid rgba(129, 140, 248, 0.5);
-  color: #c7d2fe;
+.game-console-card {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.3s ease;
+  transform-style: preserve-3d;
+  background: var(--panel-bg);
+  border: 1px solid var(--border-light);
+  border-top: 1px solid rgba(125, 211, 252, 0.3);
 }
 
-.badge-onhold {
-  background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(161, 98, 7, 0.1));
-  border: 1px solid rgba(234, 179, 8, 0.35);
-  color: #fef08a;
+.game-console-card:hover {
+  transform: translateY(-10px) rotateX(4deg) scale(1.03);
+  border-color: rgba(56, 189, 248, 0.7);
+  border-top-color: rgba(186, 230, 253, 0.8);
+  box-shadow: 
+    0 25px 45px -12px rgba(4, 9, 24, 0.9),
+    0 0 32px -4px var(--border-glow);
 }
 
-/* Pulso dinámico para el banner Now Playing */
-.pulse-playing {
-  animation: pulseNeon 3s infinite ease-in-out;
+body.light-mode .game-console-card:hover {
+  box-shadow: 
+    0 20px 35px -10px rgba(15, 23, 42, 0.15),
+    0 0 20px -3px rgba(99, 102, 241, 0.3);
 }
 
-@keyframes pulseNeon {
-  0%, 100% {
-    border-color: rgba(249, 115, 22, 0.3);
-    box-shadow: 0 0 20px -5px rgba(249, 115, 22, 0.2);
-  }
-  50% {
-    border-color: rgba(249, 115, 22, 0.6);
-    box-shadow: 0 0 35px 0px rgba(249, 115, 22, 0.35);
-  }
-}
-
-/* Gradiente reflectivo superior en posters */
+/* Brillo superior tipo sheen */
 .poster-sheen::after {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 40%, rgba(9, 10, 16, 0.95) 100%);
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, transparent 40%, rgba(11, 17, 36, 0.95) 100%);
   pointer-events: none;
 }
 
-/* Barra de scroll limpia */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
+body.light-mode .poster-sheen::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 45%, rgba(15, 23, 42, 0.85) 100%);
 }
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: rgba(15, 18, 28, 0.5);
+
+/* 7. Insignias de Estado con Brillo */
+.badge-playing {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.45), rgba(239, 68, 68, 0.35));
+  border: 1px solid rgba(249, 115, 22, 0.85);
+  color: #ffedd5;
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.45);
 }
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 9999px;
+
+.badge-platinum {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.45), rgba(217, 119, 6, 0.35));
+  border: 1px solid rgba(251, 191, 36, 0.95);
+  color: #fef9c3;
+  box-shadow: 0 0 16px rgba(234, 179, 8, 0.55);
 }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+
+.badge-completed {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(5, 150, 105, 0.3));
+  border: 1px solid rgba(16, 185, 129, 0.85);
+  color: #d1fae5;
+  box-shadow: 0 0 14px rgba(16, 185, 129, 0.4);
 }
+
+.badge-extras {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.35), rgba(99, 102, 241, 0.35));
+  border: 1px solid rgba(56, 189, 248, 0.85);
+  color: #e0f2fe;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+}
+
+.badge-onhold {
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.28), rgba(161, 98, 7, 0.2));
+  border: 1px solid rgba(234, 179, 8, 0.65);
+  color: #fef08a;
+}
+
+/* Adaptación completa en Modo Claro */
+body.light-mode .text-white { color: #0f172a !important; }
+body.light-mode .text-slate-100,
+body.light-mode .text-slate-200,
+body.light-mode .text-slate-300 { color: #1e293b !important; }
+body.light-mode .text-slate-400,
+body.light-mode .text-slate-500 { color: #64748b !important; }
+
+body.light-mode .console-nav h1 {
+  background: linear-gradient(135deg, #0f172a, #2563eb) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+
+body.light-mode .filter-btn[class*="glass-panel"] {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+body.light-mode .filter-btn[class*="glass-panel"]:hover {
+  background: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+body.light-mode #sortBySelect,
+body.light-mode #filterInput,
+body.light-mode #openStatsBtn,
+body.light-mode #openTop5Btn,
+body.light-mode #exportBtn,
+body.light-mode #importBtn {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+body.light-mode .status-btn[class*="bg-[#121623]"],
+body.light-mode .plat-btn[class*="bg-[#121623]"],
+body.light-mode #favoriteToggleBtn[class*="bg-[#121623]"] {
+  background: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #334155 !important;
+}
+
+body.light-mode #searchResults {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+}
+
+body.light-mode #searchResults li:hover {
+  background: #f1f5f9 !important;
+}
+
+/* Animación del Drawer */
+.form-drawer {
+  animation: slideFadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideFadeIn {
+  from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Scrollbar Zafiro Eléctrico */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: rgba(11, 18, 38, 0.6); }
+body.light-mode .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #1e3a8a; border-radius: 9999px; }
+body.light-mode .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #38bdf8; }

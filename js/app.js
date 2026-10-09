@@ -1,5 +1,5 @@
 /**
- * Controlador Principal de la Aplicación
+ * Controlador Principal - Game Vault Console Edition
  */
 let currentSelectedCover = "";
 let activeStatus = "completed";
@@ -36,23 +36,49 @@ const formIcon = document.getElementById("formIcon");
 const gamesGrid = document.getElementById("gamesGrid");
 const filterInput = document.getElementById("filterInput");
 const sortBySelect = document.getElementById("sortBySelect");
+const filterStatusSelect = document.getElementById("filterStatusSelect");
 
-// Now Playing
+// Drawer & Now Playing
+const formSection = document.getElementById("formSection");
+const toggleFormBtn = document.getElementById("toggleFormBtn");
+const toggleFormIcon = document.getElementById("toggleFormIcon");
+const toggleFormText = document.getElementById("toggleFormText");
+
 const nowPlayingSection = document.getElementById("nowPlayingSection");
 const npCover = document.getElementById("npCover");
+const npCoverBg = document.getElementById("npCoverBg");
 const npTitle = document.getElementById("npTitle");
 const npMeta = document.getElementById("npMeta");
 const npActionBtn = document.getElementById("npActionBtn");
 
-// 1. Selector de Estado
+// 1. Alternador fluido del formulario (Drawer)
+function toggleForm(open = null) {
+  const shouldOpen = open !== null ? open : formSection.classList.contains("hidden");
+  if (shouldOpen) {
+    formSection.classList.remove("hidden");
+    toggleFormIcon.className = "fa-solid fa-chevron-up text-sm";
+    toggleFormText.innerText = "CERRAR PANEL";
+    formSection.scrollIntoView({ behavior: 'smooth' });
+  } else {
+    formSection.classList.add("hidden");
+    toggleFormIcon.className = "fa-solid fa-plus-circle text-sm";
+    toggleFormText.innerText = "REGISTRAR JUEGO";
+  }
+}
+
+if (toggleFormBtn) {
+  toggleFormBtn.addEventListener("click", () => toggleForm());
+}
+
+// 2. Selector de Estado en Formulario
 const statusBtns = document.querySelectorAll(".status-btn");
 function setStatus(val) {
   activeStatus = val;
   statusBtns.forEach(btn => {
     if (btn.dataset.val === val) {
-      btn.className = "status-btn p-2 rounded-xl border border-indigo-500 bg-indigo-500/20 text-white text-center font-bold text-xs shadow-lg shadow-indigo-500/20 transition";
+      btn.className = "status-btn p-2 rounded-xl border border-indigo-500 bg-indigo-500/20 text-white text-center font-bold text-xs shadow-lg transition cursor-pointer";
     } else {
-      btn.className = "status-btn p-2 rounded-xl border border-slate-700/80 bg-[#121623]/80 text-slate-400 text-center font-bold text-xs hover:border-slate-600 transition";
+      btn.className = "status-btn p-2 rounded-xl border border-white/10 bg-[#121623] text-slate-400 text-center font-bold text-xs hover:border-slate-500 transition cursor-pointer";
     }
   });
 }
@@ -60,7 +86,7 @@ statusBtns.forEach(btn => {
   btn.addEventListener("click", () => setStatus(btn.dataset.val));
 });
 
-// 2. Selector de Plataformas
+// 3. Selector de Plataformas
 const platBtns = document.querySelectorAll(".plat-btn");
 platBtns.forEach(btn => {
   btn.addEventListener("click", () => {
@@ -68,11 +94,11 @@ platBtns.forEach(btn => {
     if (activePlatforms.includes(plat)) {
       if (activePlatforms.length > 1) {
         activePlatforms = activePlatforms.filter(p => p !== plat);
-        btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623]/80 text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5";
+        btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-white/10 bg-[#121623] text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5 cursor-pointer";
       }
     } else {
       activePlatforms.push(plat);
-      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5 shadow-sm";
+      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5 cursor-pointer";
     }
   });
 });
@@ -81,14 +107,14 @@ function setPlatformBadges(plats) {
   activePlatforms = plats && plats.length ? plats : ["PC"];
   platBtns.forEach(btn => {
     if (activePlatforms.includes(btn.dataset.platform)) {
-      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5 shadow-sm";
+      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5 cursor-pointer";
     } else {
-      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623]/80 text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5";
+      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-white/10 bg-[#121623] text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5 cursor-pointer";
     }
   });
 }
 
-// 3. Toggle Favorito
+// 4. Toggle Favorito
 favoriteToggleBtn.addEventListener("click", () => {
   isFavorite = !isFavorite;
   updateFavoriteUI();
@@ -96,31 +122,20 @@ favoriteToggleBtn.addEventListener("click", () => {
 
 function updateFavoriteUI() {
   if (isFavorite) {
-    favoriteToggleBtn.className = "w-full sm:w-auto px-4 py-2 rounded-xl border border-amber-500 bg-amber-500/20 text-amber-300 shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2 text-xs font-bold";
+    favoriteToggleBtn.className = "w-full sm:w-auto px-4 py-2 rounded-xl border border-amber-500 bg-amber-500/20 text-amber-300 shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2 text-xs font-bold cursor-pointer";
     favText.innerText = "¡Es Favorito!";
   } else {
-    favoriteToggleBtn.className = "w-full sm:w-auto px-4 py-2 rounded-xl border border-slate-700 bg-[#121623] text-slate-400 hover:border-amber-500/50 hover:text-amber-400 transition flex items-center justify-center gap-2 text-xs font-bold";
-    favText.innerText = "Marcar como Favorito";
+    favoriteToggleBtn.className = "w-full sm:w-auto px-4 py-2 rounded-xl border border-white/10 bg-[#121623] text-slate-400 hover:border-amber-500/50 hover:text-amber-400 transition flex items-center justify-center gap-2 text-xs font-bold cursor-pointer";
+    favText.innerText = "Marcar Favorito";
   }
 }
 
-// 4. Slider de Puntuación con Feedback de Color Dinámico
+// 5. Slider de Puntuación
 scoreRange.addEventListener("input", (e) => {
-  const val = parseFloat(e.target.value);
-  scoreDisplay.innerText = val.toFixed(1);
-
-  if (val >= 9.0) {
-    scoreDisplay.className = "text-base font-extrabold text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]";
-  } else if (val >= 7.0) {
-    scoreDisplay.className = "text-base font-extrabold text-indigo-400";
-  } else if (val >= 5.0) {
-    scoreDisplay.className = "text-base font-extrabold text-slate-300";
-  } else {
-    scoreDisplay.className = "text-base font-extrabold text-rose-400";
-  }
+  scoreDisplay.innerText = parseFloat(e.target.value).toFixed(1);
 });
 
-// 5. Portada Manual
+// 6. Portada Manual
 manualCoverBtn.addEventListener("click", () => {
   const url = prompt("Pega aquí el enlace de la imagen:");
   if (url && url.trim().startsWith("http")) {
@@ -132,7 +147,7 @@ manualCoverBtn.addEventListener("click", () => {
   }
 });
 
-// 6. Búsqueda de Carátulas
+// 7. Búsqueda de Carátulas
 function onSearchTrigger() {
   const term = gameSearch.value.trim();
   if (term.length < 2) return;
@@ -151,7 +166,7 @@ function renderSearchResults(items, originalQuery) {
   searchResults.innerHTML = "";
 
   const directLi = document.createElement("li");
-  directLi.className = "flex items-center gap-3 p-3 bg-indigo-950/60 hover:bg-indigo-900/80 cursor-pointer transition text-indigo-300 font-semibold text-xs border-b border-slate-800/80";
+  directLi.className = "flex items-center gap-3 p-3 bg-indigo-950/60 hover:bg-indigo-900/80 cursor-pointer transition text-indigo-300 font-semibold text-xs";
   directLi.innerHTML = `<i class="fa-solid fa-check-circle"></i> Usar "${originalQuery}" directamente`;
   directLi.addEventListener("click", () => {
     gameSearch.value = originalQuery;
@@ -166,10 +181,10 @@ function renderSearchResults(items, originalQuery) {
 
   items.forEach(item => {
     const li = document.createElement("li");
-    li.className = "flex items-center gap-3 p-2.5 hover:bg-slate-800/90 cursor-pointer transition";
+    li.className = "flex items-center gap-3 p-2.5 hover:bg-white/10 cursor-pointer transition";
     const thumb = item.image || CanvasPoster.generateSmartPoster(item.title);
     li.innerHTML = `
-      <img src="${thumb}" class="w-10 h-14 object-cover rounded-lg shadow-md shrink-0 bg-slate-950">
+      <img src="${thumb}" class="w-10 h-14 object-cover rounded-lg shadow shrink-0 bg-slate-950">
       <div class="overflow-hidden">
         <p class="text-xs font-bold text-white truncate">${item.title}</p>
         <p class="text-[11px] text-slate-400 mt-0.5 truncate">${item.desc}</p>
@@ -203,7 +218,7 @@ gameSearch.addEventListener("input", (e) => {
   clearTimeout(debounceTimer);
   const val = e.target.value.trim();
   if (val.length >= 2) {
-    debounceTimer = setTimeout(onSearchTrigger, 350);
+    debounceTimer = setTimeout(onSearchTrigger, 400);
   } else {
     searchResults.classList.add("hidden");
   }
@@ -215,7 +230,7 @@ document.addEventListener("click", (e) => {
   }
 });
 
-// 7. Modo Edición y Reset
+// 8. Reset y Modo Edición
 function resetForm() {
   editingGameId = null;
   formTitle.innerText = "Añadir Título";
@@ -223,7 +238,6 @@ function resetForm() {
   formIconBox.className = "w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30 text-lg";
   formIcon.className = "fa-solid fa-plus";
   saveBtnText.innerText = "Guardar en mi estante";
-  cancelEditBtn.classList.add("hidden");
 
   gameSearch.value = "";
   currentSelectedCover = "";
@@ -236,13 +250,12 @@ function resetForm() {
   updateFavoriteUI();
   scoreRange.value = 9;
   scoreDisplay.innerText = "9.0";
-  scoreDisplay.className = "text-base font-extrabold text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]";
   gameHours.value = "";
   gameTags.value = "";
   gameNotes.value = "";
 }
 
-cancelEditBtn.addEventListener("click", resetForm);
+cancelEditBtn.addEventListener("click", () => toggleForm(false));
 
 function startEditGame(game) {
   editingGameId = game.id;
@@ -251,7 +264,6 @@ function startEditGame(game) {
   formIconBox.className = "w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30 text-lg";
   formIcon.className = "fa-solid fa-pen";
   saveBtnText.innerText = "Actualizar registro";
-  cancelEditBtn.classList.remove("hidden");
 
   gameSearch.value = game.title;
   currentSelectedCover = game.coverUrl;
@@ -271,10 +283,10 @@ function startEditGame(game) {
   gameTags.value = (game.tags || []).join(", ");
   gameNotes.value = game.notes || "";
 
-  document.getElementById("formSection").scrollIntoView({ behavior: 'smooth' });
+  toggleForm(true);
 }
 
-// 8. Guardar / Actualizar
+// 9. Guardar / Actualizar
 saveGameBtn.addEventListener("click", () => {
   const title = gameSearch.value.trim();
   if (!title) {
@@ -310,24 +322,21 @@ saveGameBtn.addEventListener("click", () => {
 
   renderLibrary();
   resetForm();
+  toggleForm(false);
 });
 
-// 9. Filtros y Ordenamiento
-document.querySelectorAll(".filter-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".filter-btn").forEach(b => {
-      b.className = "filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#141824] text-slate-400 border border-slate-800 hover:border-slate-700 transition";
-    });
-    btn.className = "filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition";
-    currentFilter = btn.dataset.filter;
+// 10. Filtro mediante Dropdown y Búsqueda
+if (filterStatusSelect) {
+  filterStatusSelect.addEventListener("change", (e) => {
+    currentFilter = e.target.value;
     renderLibrary();
   });
-});
+}
 
 filterInput.addEventListener("input", () => renderLibrary());
 sortBySelect.addEventListener("change", () => renderLibrary());
 
-// 10. Renderizado de Biblioteca (Cards visualmente pulidas)
+// 11. Renderizado de Biblioteca
 function renderLibrary() {
   const lib = StorageManager.getGames();
   const term = filterInput.value.toLowerCase().trim();
@@ -350,15 +359,19 @@ function renderLibrary() {
     document.getElementById("statAvg").innerText = "0.0";
   }
 
-  const currentPlayingGame = lib.find(g => g.status === 'playing');
+  // Hero Spotlight
+  const currentPlayingGame = lib.find(g => g.status === 'playing') || lib[0];
   if (currentPlayingGame) {
     npCover.src = currentPlayingGame.coverUrl;
+    if (npCoverBg) npCoverBg.style.backgroundImage = `url('${currentPlayingGame.coverUrl}')`;
     npTitle.innerText = currentPlayingGame.title;
     npMeta.innerText = `${(currentPlayingGame.platforms || []).join(", ")} • ${currentPlayingGame.hours || 0} hrs dedicadas`;
-    nowPlayingSection.classList.remove("hidden");
     npActionBtn.onclick = () => startEditGame(currentPlayingGame);
   } else {
-    nowPlayingSection.classList.add("hidden");
+    npTitle.innerText = "Comienza tu colección";
+    npMeta.innerText = "Haz clic en 'Registrar Juego' para comenzar";
+    npCover.src = "";
+    if (npCoverBg) npCoverBg.style.backgroundImage = "none";
   }
 
   let filtered = [...lib];
@@ -396,9 +409,9 @@ function renderLibrary() {
 
   if (filtered.length === 0) {
     gamesGrid.innerHTML = `
-      <div class="col-span-full py-20 text-center glass rounded-3xl border border-slate-800/80">
+      <div class="col-span-full py-20 text-center glass-panel rounded-3xl border border-white/10">
         <i class="fa-solid fa-gamepad text-5xl text-slate-600 mb-3 block"></i>
-        <p class="text-sm font-semibold text-slate-400">No hay juegos en esta vista.</p>
+        <p class="text-sm font-bold text-slate-400 console-font">No se encontraron títulos en esta categoría.</p>
       </div>
     `;
     return;
@@ -406,7 +419,7 @@ function renderLibrary() {
 
   filtered.forEach(game => {
     const card = document.createElement("div");
-    card.className = "glass-card game-card-hover rounded-2xl overflow-hidden flex flex-col group cursor-pointer relative shadow-xl";
+    card.className = "game-console-card rounded-2xl overflow-hidden flex flex-col group cursor-pointer relative shadow-xl";
 
     let badgeHtml = '';
     if (game.status === 'playing') {
@@ -414,55 +427,61 @@ function renderLibrary() {
     } else if (game.status === 'platinum') {
       badgeHtml = `<span class="badge-platinum text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-trophy text-amber-400"></i> 100%</span>`;
     } else if (game.status === 'extras') {
-      badgeHtml = `<span class="badge-extras text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-star-half-stroke text-indigo-300"></i> Extras</span>`;
+      badgeHtml = `<span class="badge-extras text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-star-half-stroke"></i> Extras</span>`;
     } else if (game.status === 'onhold') {
-      badgeHtml = `<span class="badge-onhold text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-pause"></i> En Pausa</span>`;
+      badgeHtml = `<span class="badge-onhold text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-pause"></i> Pausa</span>`;
     } else {
       badgeHtml = `<span class="badge-completed text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-check"></i> Pasado</span>`;
     }
 
-    const favBadge = game.favorite ? `<div class="absolute top-2.5 right-12 z-10 w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center text-xs shadow-md backdrop-blur-sm"><i class="fa-solid fa-crown text-[11px]"></i></div>` : '';
+    // Corona en la esquina izquierda junto al estado
+    const favBadge = game.favorite ? `
+      <div class="bg-amber-500/25 text-amber-300 border border-amber-500/50 px-1.5 py-0.5 rounded-md text-[10px] font-black flex items-center gap-1 shadow-md">
+        <i class="fa-solid fa-crown text-[9px]"></i>
+      </div>` : '';
 
     const platformIcons = (game.platforms || []).map(p => {
       if (p === 'PC') return '<i class="fa-brands fa-windows text-blue-400" title="PC"></i>';
       if (p === 'PlayStation') return '<i class="fa-brands fa-playstation text-blue-500" title="PlayStation"></i>';
-      if (p === 'Xbox') return '<i class="fa-brands fa-xbox text-emerald-400" title="Xbox"></i>';
-      if (p === 'Nintendo') return '<i class="fa-solid fa-gamepad text-red-400" title="Nintendo"></i>';
+      if (p === 'Xbox') return '<i class="fa-brands fa-xbox text-emerald-500" title="Xbox"></i>';
+      if (p === 'Nintendo') return '<i class="fa-solid fa-gamepad text-red-500" title="Nintendo"></i>';
       return '<i class="fa-solid fa-ghost text-purple-400" title="Retro"></i>';
     }).join(" ");
 
-    const hoursDisplay = game.hours ? `<span class="text-[10px] text-slate-300 font-semibold bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded border border-white/10"><i class="fa-regular fa-clock mr-1 text-slate-400"></i>${game.hours}h</span>` : '';
+    const hoursDisplay = game.hours ? `<span class="text-[10px] text-slate-300 font-bold bg-black/70 px-1.5 py-0.5 rounded border border-white/10"><i class="fa-regular fa-clock mr-1 text-slate-400"></i>${game.hours}h</span>` : '';
 
     card.innerHTML = `
       <div class="relative aspect-[3/4] overflow-hidden bg-slate-950 poster-sheen">
-        <img src="${game.coverUrl}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='${CanvasPoster.generateSmartPoster(game.title)}'">
+        <img src="${game.coverUrl}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" onerror="this.src='${CanvasPoster.generateSmartPoster(game.title)}'">
         
-        <div class="absolute top-2.5 left-2.5 z-10">
+        <!-- Esquina Superior Izquierda: Estado + Corona -->
+        <div class="absolute top-2.5 left-2.5 z-10 flex items-center gap-1.5">
           ${badgeHtml}
+          ${favBadge}
         </div>
 
-        ${favBadge}
-
-        <div class="absolute top-2.5 right-2.5 z-10 bg-black/85 backdrop-blur-md px-2 py-0.5 rounded-lg border border-white/15 text-amber-400 font-black text-xs flex items-center gap-1 shadow-lg">
+        <!-- Esquina Superior Derecha: Puntuación -->
+        <div class="absolute top-2.5 right-2.5 z-10 bg-black/85 backdrop-blur-md px-2 py-0.5 rounded-lg border border-white/15 text-amber-400 font-black text-xs flex items-center gap-1 shadow-lg console-font">
           <i class="fa-solid fa-star text-[10px]"></i> ${game.rating.toFixed(1)}
         </div>
 
+        <!-- Esquina Inferior: Plataformas y Horas -->
         <div class="absolute bottom-2.5 left-2.5 right-2.5 z-10 flex justify-between items-center text-xs drop-shadow-md">
           <div class="flex gap-2">${platformIcons}</div>
           ${hoursDisplay}
         </div>
       </div>
 
-      <div class="p-3.5 flex flex-col justify-between flex-1 gap-2 bg-gradient-to-b from-[#121623]/90 to-[#0e111c]">
+      <div class="p-3.5 flex flex-col justify-between flex-1 gap-2">
         <div>
-          <h3 class="font-bold text-xs sm:text-sm text-slate-100 line-clamp-1 group-hover:text-indigo-300 transition" title="${game.title}">${game.title}</h3>
+          <h3 class="font-bold text-xs sm:text-sm text-slate-100 line-clamp-1 group-hover:text-indigo-400 transition console-font" title="${game.title}">${game.title}</h3>
           ${game.tags && game.tags.length ? `
-            <div class="flex flex-wrap gap-1 mt-1.5">
-              ${game.tags.slice(0, 2).map(t => `<span class="text-[9px] px-1.5 py-0.5 rounded bg-indigo-950/70 border border-indigo-500/20 text-indigo-300 font-medium">${t}</span>`).join(" ")}
+            <div class="flex flex-wrap gap-1 mt-1">
+              ${game.tags.slice(0, 2).map(t => `<span class="text-[9px] text-indigo-400 font-bold">${t}</span>`).join(" ")}
             </div>
           ` : ''}
         </div>
-        ${game.notes ? `<p class="text-[11px] text-slate-400 line-clamp-2 italic bg-[#0a0d16] p-2 rounded-lg border border-slate-800/60">"${game.notes}"</p>` : ''}
+        ${game.notes ? `<p class="text-[11px] text-slate-400 line-clamp-2 italic console-input p-2 rounded-lg border border-white/5">"${game.notes}"</p>` : ''}
       </div>
     `;
 
@@ -471,7 +490,7 @@ function renderLibrary() {
   });
 }
 
-// 11. Modal Detalle
+// 12. Modal Detalle
 const detailModal = document.getElementById("detailModal");
 const closeModalBtn = document.getElementById("closeModalBtn");
 const modalCover = document.getElementById("modalCover");
@@ -534,7 +553,7 @@ modalDeleteBtn.addEventListener("click", () => {
   }
 });
 
-// 12. Modal Stats
+// 13. Modal Stats
 const statsModal = document.getElementById("statsModal");
 const openStatsBtn = document.getElementById("openStatsBtn");
 const closeStatsModalBtn = document.getElementById("closeStatsModalBtn");
@@ -617,7 +636,7 @@ statsModal.addEventListener("click", (e) => {
   if (e.target === statsModal) statsModal.classList.add("hidden");
 });
 
-// 13. Top 5 Canvas
+// 14. Top 5 Canvas
 const top5Modal = document.getElementById("top5Modal");
 const openTop5Btn = document.getElementById("openTop5Btn");
 const closeTop5ModalBtn = document.getElementById("closeTop5ModalBtn");
@@ -647,7 +666,7 @@ downloadTop5Btn.addEventListener("click", () => {
   link.click();
 });
 
-// 14. Backup JSON
+// 15. Backup JSON
 document.getElementById("exportBtn").addEventListener("click", () => {
   const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(localStorage.getItem("game_vault_records") || "[]");
   const dlAnchor = document.createElement('a');
@@ -679,7 +698,7 @@ document.getElementById("fileInput").addEventListener("change", (e) => {
   reader.readAsText(file);
 });
 
-// 15. Demo y Reset
+// 16. Demo y Reset
 document.getElementById("loadDemoBtn").addEventListener("click", () => {
   const demoGames = [
     {
@@ -744,6 +763,34 @@ document.getElementById("clearAllBtn").addEventListener("click", () => {
     resetForm();
   }
 });
+
+// 17. Control de Tema (Claro / Oscuro)
+const themeToggleBtn = document.getElementById("themeToggleBtn");
+const themeIcon = document.getElementById("themeIcon");
+const themeText = document.getElementById("themeText");
+
+function applyTheme(isLight) {
+  if (isLight) {
+    document.body.classList.add("light-mode");
+    if (themeIcon) themeIcon.className = "fa-solid fa-moon text-indigo-500";
+    if (themeText) themeText.innerText = "Modo Oscuro";
+  } else {
+    document.body.classList.remove("light-mode");
+    if (themeIcon) themeIcon.className = "fa-solid fa-sun text-amber-400";
+    if (themeText) themeText.innerText = "Modo Claro";
+  }
+}
+
+const savedTheme = localStorage.getItem("game_vault_theme");
+applyTheme(savedTheme === "light");
+
+if (themeToggleBtn) {
+  themeToggleBtn.addEventListener("click", () => {
+    const isLightNow = document.body.classList.toggle("light-mode");
+    localStorage.setItem("game_vault_theme", isLightNow ? "light" : "dark");
+    applyTheme(isLightNow);
+  });
+}
 
 // Inicialización
 renderLibrary();

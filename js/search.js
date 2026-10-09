@@ -1,34 +1,72 @@
 /**
- * Módulo de búsqueda de carátulas (JSONP Wikipedia MediaWiki)
+ * Motor de búsqueda 100% videojuegos utilizando la API de RAWG / Game Database.
+ * Trae carátulas oficiales garantizadas en alta calidad.
  */
 const SearchEngine = {
-  search(term, callback) {
-    if (!term || term.length < 2) return;
+  // Clave de acceso pública para catálogo de videojuegos
+  apiKey: "c542e67aec3a4340908f9de9e86038af",
 
-    window.handleWikiResults = function(data) {
+  async search(term, callback) {
+    if (!term || term.trim().length < 2) {
+      callback([]);
+      return;
+    }
+
+    const cleanTerm = encodeURIComponent(term.trim());
+    const url = `https://api.rawg.io/api/games?key=${this.apiKey}&search=${cleanTerm}&page_size=6&search_precise=true`;
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Fallo en RAWG");
+      
+      const data = await response.json();
+      
+      if (data && data.results && data.results.length > 0) {
+        const games = data.results
+          .filter(game => game.background_image) // Solo juegos con carátula real
+          .map(game => ({
+            title: game.name,
+            image: game.background_image,
+            desc: game.released ? `Lanzamiento: ${game.released.slice(0, 4)}` : "Videojuego"
+          }));
+
+        callback(games);
+        return;
+      }
+      
+      // Si RAWG no encontró, intentar fallback limpio
+      this.searchFallback(term, callback);
+    } catch (err) {
+      console.warn("Fallo en API primaria, usando fallback:", err);
+      this.searchFallback(term, callback);
+    }
+  },
+
+  // Fallback rápido por si hay problemas de red
+  searchFallback(term, callback) {
+    window.handleWikiBackup = function(data) {
       let items = [];
       if (data && data.query && data.query.pages) {
-        items = Object.values(data.query.pages).map(p => ({
-          title: p.title.replace(/\s*\(.*video game.*\)/i, "").trim(),
-          image: p.thumbnail ? p.thumbnail.source : null,
-          desc: p.description || "Videojuego"
-        }));
+        items = Object.values(data.query.pages)
+          .filter(p => p.thumbnail)
+          .map(p => ({
+            title: p.title.replace(/\s*\((.*video game.*\vert{}.*game.*)\)/i, "").trim(),
+            image: p.thumbnail.source,
+            desc: p.description || "Videojuego"
+          }));
       }
       callback(items);
     };
 
-    const oldScript = document.getElementById("jsonp-search");
+    const oldScript = document.getElementById("jsonp-backup");
     if (oldScript) oldScript.remove();
 
     const script = document.createElement("script");
-    script.id = "jsonp-search";
-    const query = encodeURIComponent(term + " video game");
-    script.src = `https://en.wikipedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=${query}&gsrlimit=6&prop=pageimages|description&piprop=thumbnail&pithumbsize=400&callback=handleWikiResults`;
+    script.id = "jsonp-backup";
+    const q = encodeURIComponent(`${term} video game`);
+    script.src = `https://en.wikipedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=${q}&gsrlimit=6&prop=pageimages|description&piprop=thumbnail&pithumbsize=500&callback=handleWikiBackup`;
     
-    script.onerror = () => {
-      callback([]);
-    };
-
+    script.onerror = () => callback([]);
     document.body.appendChild(script);
   }
 };
