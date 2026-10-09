@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Showcase | Registro & Dashboard Personal</title>
+  
+  <!-- Meta etiquetas para app móvil (PWA/Home Screen) -->
+  <meta name="theme-color" content="#07080b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: radial-gradient(circle at top right, #1a162b, #0c0e14 45%, #07080b);
+      color: #f1f5f9;
+      min-height: 100vh;
+    }
+    .glass {
+      background: rgba(18, 22, 34, 0.8);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card {
+      background: rgba(23, 27, 40, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .badge-playing {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(249, 115, 22, 0.2));
+      border: 1px solid rgba(249, 115, 22, 0.6);
+      color: #fb923c;
+      box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
+    }
+    .badge-platinum {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(245, 158, 11, 0.2));
+      border: 1px solid rgba(245, 158, 11, 0.6);
+      color: #fbbf24;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+    }
+    .badge-completed {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.15));
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      color: #34d399;
+    }
+    .badge-extras {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(79, 70, 229, 0.15));
+      border: 1px solid rgba(99, 102, 241, 0.5);
+      color: #a5b4fc;
+    }
+    .badge-onhold {
+      background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(202, 138, 4, 0.1));
+      border: 1px solid rgba(234, 179, 8, 0.4);
+      color: #fde047;
+    }
+    .pulse-playing {
+      animation: pulseGlow 2s infinite;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { box-shadow: 0 0 15px rgba(249, 115, 22, 0.4); }
+      50% { box-shadow: 0 0 30px rgba(239, 68, 68, 0.7); }
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #2a334a;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="p-3 sm:p-6 lg:p-10 flex flex-col items-center">
+
+  <div class="w-full max-w-7xl space-y-8">
+    
+    <!-- Top Header -->
+    <header class="glass rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shadow-2xl relative overflow-hidden">
+      <div class="absolute -top-16 -left-16 w-56 h-56 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
+      
+      <div class="relative z-10">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-3">
+          <i class="fa-solid fa-gamepad"></i> Personal Game Log & Tracker
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-200 to-indigo-300 bg-clip-text text-transparent">
+          Game Showcase
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-md">Tu catálogo personal de aventuras completadas, partidas activas, análisis y estadísticas.</p>
+      </div>
+
+      <!-- Quick Metrics -->
+      <div class="flex flex-wrap items-center gap-3 relative z-10 w-full md:w-auto">
+        <div class="glass-card px-4 py-3 rounded-2xl flex-1 sm:flex-none border border-slate-700/60 shadow-lg text-center">
+          <span class="block text-2xl font-black text-orange-400" id="statPlaying">0</span>
+          <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Jugando</span>
+        </div>
+        <div class="glass-card px-4 py-3 rounded-2xl flex-1 sm:flex-none border border-slate-700/60 shadow-lg text-center">
+          <span class="block text-2xl font-black text-emerald-400" id="statCompleted">0</span>
+          <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Pasados</span>
+        </div>
+        <div class="glass-card px-4 py-3 rounded-2xl flex-1 sm:flex-none border border-slate-700/60 shadow-lg text-center">
+          <span class="block text-2xl font-black text-amber-400" id="statPlatinum">0</span>
+          <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Platinos</span>
+        </div>
+        <div class="glass-card px-4 py-3 rounded-2xl flex-1 sm:flex-none border border-slate-700/60 shadow-lg text-center">
+          <span class="block text-2xl font-black text-indigo-400" id="statHours">0h</span>
+          <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Horas Totales</span>
+        </div>
+        <div class="glass-card px-4 py-3 rounded-2xl flex-1 sm:flex-none border border-slate-700/60 shadow-lg text-center">
+          <span class="block text-2xl font-black text-purple-400" id="statAvg">0.0</span>
+          <span class="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Promedio</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Now Playing Highlight Section -->
+    <section id="nowPlayingSection" class="hidden glass rounded-3xl p-5 border border-orange-500/30 pulse-playing relative overflow-hidden">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-16 rounded-xl overflow-hidden bg-slate-900 border border-orange-500/40 shrink-0">
+            <img id="npCover" class="w-full h-full object-cover" alt="Cover">
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="relative flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-orange-500"></span>
+              </span>
+              <span class="text-[11px] font-extrabold uppercase tracking-wider text-orange-400">Jugando Actualmente</span>
+            </div>
+            <h3 id="npTitle" class="text-lg font-black text-white"></h3>
+            <p id="npMeta" class="text-xs text-slate-300 mt-0.5"></p>
+          </div>
+        </div>
+        <button id="npActionBtn" class="px-4 py-2 bg-orange-500/20 hover:bg-orange-500/30 text-orange-300 border border-orange-500/40 rounded-xl text-xs font-bold transition flex items-center gap-2">
+          <i class="fa-solid fa-pen-to-square"></i> Actualizar partida
+        </button>
+      </div>
+    </section>
+
+    <!-- Formulario para agregar / editar -->
+    <section class="glass rounded-3xl p-5 sm:p-7 shadow-xl border border-slate-800" id="formSection">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <div id="formIconBox" class="w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30 text-lg">
+            <i class="fa-solid fa-plus" id="formIcon"></i>
+          </div>
+          <div>
+            <h2 class="text-lg sm:text-xl font-bold text-white" id="formTitle">Añadir Título</h2>
+            <p class="text-xs text-slate-400" id="formSubtitle">Registra un juego completado, en proceso o en pausa</p>
+          </div>
+        </div>
+
+        <button type="button" id="cancelEditBtn" class="hidden px-3 py-1.5 rounded-xl bg-rose-500/20 text-rose-300 border border-rose-500/30 text-xs font-semibold hover:bg-rose-500/30 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-xmark"></i> Cancelar edición
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left: Search & Poster Selection -->
+        <div class="lg:col-span-5 flex flex-col gap-4">
+          <div class="relative">
+            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">Nombre del Videojuego</label>
+            <div class="flex gap-2">
+              <input type="text" id="gameSearch" autocomplete="off" placeholder="Escribe el nombre (ej: Elden Ring)..." 
+                     class="w-full bg-[#121623] border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white placeholder-slate-500 transition shadow-inner">
+              <button type="button" id="searchBtn" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-xl transition flex items-center gap-1.5 shrink-0 shadow-lg shadow-indigo-600/30">
+                <i class="fa-solid fa-magnifying-glass" id="searchIcon"></i> <span id="searchBtnText">Buscar</span>
+              </button>
+            </div>
+            
+            <!-- Menú de resultados de carátulas -->
+            <ul id="searchResults" class="absolute z-30 w-full mt-2 bg-[#161c2d] border border-slate-700 rounded-xl shadow-2xl hidden max-h-64 overflow-y-auto custom-scrollbar divide-y divide-slate-800"></ul>
+          </div>
+
+          <!-- Previsualizador de carátula -->
+          <div class="flex items-center gap-4 p-3 rounded-2xl bg-[#121623]/80 border border-slate-800">
+            <div id="coverBox" class="w-20 h-28 bg-[#181f33] rounded-xl overflow-hidden flex items-center justify-center border border-slate-700 shrink-0 relative shadow-inner">
+              <i class="fa-solid fa-image text-slate-600 text-2xl" id="posterIcon"></i>
+              <img id="coverPreview" class="w-full h-full object-cover hidden" alt="Carátula">
+            </div>
+            <div class="overflow-hidden flex-1">
+              <span class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold">Carátula seleccionada:</span>
+              <p class="text-sm font-bold text-slate-200 truncate mt-0.5" id="coverStatusText">Sin carátula (se genera al guardar)</p>
+              <button type="button" id="manualCoverBtn" class="text-[11px] text-indigo-400 hover:text-indigo-300 mt-2 flex items-center gap-1 font-medium transition">
+                <i class="fa-solid fa-link"></i> Pegar link de Google Imágenes
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Status, Platform, Score & Tags -->
+        <div class="lg:col-span-7 flex flex-col justify-between gap-5">
+          
+          <!-- Estado de Juego -->
+          <div>
+            <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">Estado del Juego</label>
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="statusOptions">
+              <button type="button" data-val="playing" class="status-btn p-2 rounded-xl border border-slate-700 bg-[#121623] text-slate-400 text-center font-bold text-xs hover:border-orange-500/50 transition">
+                <i class="fa-solid fa-fire text-orange-400 block mb-1"></i> Jugando
+              </button>
+              <button type="button" data-val="completed" class="status-btn p-2 rounded-xl border border-indigo-500 bg-indigo-500/20 text-white text-center font-bold text-xs shadow transition">
+                <i class="fa-solid fa-circle-check text-emerald-400 block mb-1"></i> Historia
+              </button>
+              <button type="button" data-val="extras" class="status-btn p-2 rounded-xl border border-slate-700 bg-[#121623] text-slate-400 text-center font-bold text-xs hover:border-indigo-500/50 transition">
+                <i class="fa-solid fa-star-half-stroke text-indigo-400 block mb-1"></i> + Extras
+              </button>
+              <button type="button" data-val="platinum" class="status-btn p-2 rounded-xl border border-slate-700 bg-[#121623] text-slate-400 text-center font-bold text-xs hover:border-amber-500/50 transition">
+                <i class="fa-solid fa-trophy text-amber-400 block mb-1"></i> Platino 100%
+              </button>
+              <button type="button" data-val="onhold" class="status-btn p-2 rounded-xl border border-slate-700 bg-[#121623] text-slate-400 text-center font-bold text-xs hover:border-yellow-500/50 transition">
+                <i class="fa-solid fa-pause text-yellow-400 block mb-1"></i> Pausa
+              </button>
+            </div>
+          </div>
+
+          <!-- Plataformas y Favorito -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+            <div class="sm:col-span-8">
+              <label class="block text-[11px] font-bold text-slate-300 uppercase tracking-wider mb-1.5">Plataforma(s)</label>
+              <div class="flex flex-wrap gap-1.5" id="platformBadges">
+                <button type="button" data-platform="PC" class="plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5">
+                  <i class="fa-brands fa-windows text-blue-400"></i> PC
+                </button>
+                <button type="button" data-platform="PlayStation" class="plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623] text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5">
+                  <i class="fa-brands fa-playstation text-blue-500"></i> PlayStation
+                </button>
+                <button type="button" data-platform="Xbox" class="plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623] text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5">
+                  <i class="fa-brands fa-xbox text-emerald-500"></i> Xbox
+                </button>
+                <button type="button" data-platform="Nintendo" class="plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623] text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-gamepad text-red-500"></i> Nintendo
+                </button>
+                <button type="button" data-platform="Retro" class="plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623] text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5">
+                  <i class="fa-solid fa-ghost text-purple-400"></i> Retro/Emulador
+                </button>
+              </div>
+            </div>
+
+            <!-- Botón Favorito / Masterpiece -->
+            <div class="sm:col-span-4 flex sm:justify-end items-end h-full">
+              <button type="button" id="favoriteToggleBtn" class="w-full sm:w-auto px-4 py-2 rounded-xl border border-slate-700 bg-[#121623] text-slate-400 hover:border-amber-500/50 hover:text-amber-400 transition flex items-center justify-center gap-2 text-xs font-bold">
+                <i class="fa-solid fa-crown"></i> <span id="favText">Marcar como Favorito</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Horas, Nota y Tags -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+            
+            <!-- Horas jugadas -->
+            <div class="sm:col-span-4 bg-[#121623] p-2.5 rounded-xl border border-slate-800">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Horas dedicadas</label>
+              <div class="flex items-center gap-2">
+                <i class="fa-regular fa-clock text-indigo-400 text-xs"></i>
+                <input type="number" id="gameHours" min="0" step="1" placeholder="Ej: 35"
+                       class="w-full bg-transparent text-sm text-white font-bold focus:outline-none placeholder-slate-600">
+                <span class="text-xs text-slate-500 font-bold">hrs</span>
+              </div>
+            </div>
+
+            <!-- Calificación Slider -->
+            <div class="sm:col-span-4 bg-[#121623] p-2.5 rounded-xl border border-slate-800">
+              <div class="flex justify-between items-center mb-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Puntuación</span>
+                <span id="scoreDisplay" class="text-base font-extrabold text-amber-400">9.0</span>
+              </div>
+              <input type="range" id="scoreRange" min="1" max="10" step="0.5" value="9" 
+                     class="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+            </div>
+
+            <!-- Tags rápidos -->
+            <div class="sm:col-span-4 bg-[#121623] p-2.5 rounded-xl border border-slate-800">
+              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tags / Géneros</label>
+              <input type="text" id="gameTags" placeholder="Ej: #Soulslike, #Indie..." 
+                     class="w-full bg-transparent text-xs text-slate-200 focus:outline-none placeholder-slate-600">
+            </div>
+          </div>
+
+          <!-- Comentarios / Crítica -->
+          <div>
+            <input type="text" id="gameNotes" placeholder="Opinión o recuerdos memorables (ej: Historia brutal, jugabilidad top...)"
+                   class="w-full bg-[#121623] border border-slate-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 text-white placeholder-slate-500 transition">
+          </div>
+
+          <!-- Botón de Guardado -->
+          <div class="flex justify-end gap-3 pt-2">
+            <button id="saveGameBtn" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold text-sm shadow-xl shadow-indigo-600/40 transition transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+              <i class="fa-solid fa-floppy-disk" id="saveBtnIcon"></i> <span id="saveBtnText">Guardar en mi estante</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Toolbar: Filtros, Ordenamiento y Herramientas -->
+    <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
+      
+      <!-- Filtros rápidos por estado -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button data-filter="all" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white transition">Todos</button>
+        <button data-filter="playing" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#141824] text-slate-400 border border-slate-800 hover:border-orange-500/50 hover:text-orange-400 transition">🔥 Jugando</button>
+        <button data-filter="completed" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#141824] text-slate-400 border border-slate-800 hover:border-emerald-500/50 hover:text-emerald-400 transition">🏆 Pasados</button>
+        <button data-filter="platinum" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#141824] text-slate-400 border border-slate-800 hover:border-amber-400/50 hover:text-amber-400 transition">👑 Platinos</button>
+        <button data-filter="favorite" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#141824] text-slate-400 border border-slate-800 hover:border-amber-400/50 hover:text-amber-400 transition">⭐ Favoritos</button>
+        <button data-filter="onhold" class="filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#141824] text-slate-400 border border-slate-800 hover:border-yellow-500/50 hover:text-yellow-400 transition">⏸️ Pausa</button>
+      </div>
+
+      <!-- Buscador interno, Sort y Extras -->
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+        
+        <!-- Ordenamiento dinámico -->
+        <div class="relative">
+          <select id="sortBySelect" class="bg-[#121623] border border-slate-800 rounded-xl px-3 py-1.5 text-xs text-slate-300 font-semibold focus:outline-none focus:border-indigo-500 cursor-pointer">
+            <option value="recent">Más recientes</option>
+            <option value="rating-desc">Mejor nota (10 - 1)</option>
+            <option value="rating-asc">Peor nota (1 - 10)</option>
+            <option value="hours-desc">Más horas jugadas</option>
+            <option value="title-asc">Alfabético (A - Z)</option>
+          </select>
+        </div>
+
+        <!-- Buscador en colección -->
+        <div class="relative flex-1 sm:w-56">
+          <input type="text" id="filterInput" placeholder="Buscar título o #tag..." 
+                 class="w-full bg-[#121623] border border-slate-800 rounded-xl pl-8 pr-3 py-1.5 text-xs text-white focus:outline-none focus:border-indigo-500">
+          <i class="fa-solid fa-filter absolute left-2.5 top-2 text-slate-500 text-xs"></i>
+        </div>
+        
+        <!-- Stats Modal Trigger -->
+        <button id="openStatsBtn" title="Ver Estadísticas & Gráficas" class="px-3 py-1.5 rounded-xl bg-[#121623] border border-slate-800 hover:border-indigo-500/50 text-slate-300 hover:text-indigo-400 text-xs font-bold transition flex items-center gap-1.5">
+          <i class="fa-solid fa-chart-pie text-indigo-400"></i> Stats
+        </button>
+
+        <!-- Export Top 5 Image Trigger -->
+        <button id="openTop5Btn" title="Generar póster Top 5 para compartir" class="px-3 py-1.5 rounded-xl bg-[#121623] border border-slate-800 hover:border-amber-500/50 text-slate-300 hover:text-amber-400 text-xs font-bold transition flex items-center gap-1.5">
+          <i class="fa-solid fa-camera-retro text-amber-400"></i> Top 5
+        </button>
+
+        <!-- Backup JSON -->
+        <button id="exportBtn" title="Descargar copia de seguridad (JSON)" class="p-2 rounded-xl bg-[#121623] border border-slate-800 hover:border-slate-600 text-slate-400 hover:text-white text-xs transition">
+          <i class="fa-solid fa-download"></i>
+        </button>
+        <button id="importBtn" title="Restaurar copia de seguridad (JSON)" class="p-2 rounded-xl bg-[#121623] border border-slate-800 hover:border-slate-600 text-slate-400 hover:text-white text-xs transition">
+          <i class="fa-solid fa-upload"></i>
+        </button>
+        <input type="file" id="fileInput" accept=".json" class="hidden">
+      </div>
+    </div>
+
+    <!-- Galería / Grid -->
+    <main>
+      <div id="gamesGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
+        <!-- Render dinámico -->
+      </div>
+    </main>
+
+    <!-- Footer con opciones de Datos Demo y Reset -->
+    <footer class="pt-8 pb-4 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-code text-indigo-500"></i>
+        <span>Game Showcase • Código Abierto</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <button id="loadDemoBtn" class="hover:text-indigo-400 transition underline underline-offset-4">
+          <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Cargar datos demo
+        </button>
+        <span>•</span>
+        <button id="clearAllBtn" class="hover:text-rose-400 transition">
+          <i class="fa-solid fa-trash-can mr-1"></i> Limpiar todo
+        </button>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Modal Detalle Reseña -->
+  <div id="detailModal" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+    <div class="glass-card max-w-lg w-full rounded-3xl overflow-hidden border border-slate-700 shadow-2xl relative">
+      <button id="closeModalBtn" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/90 transition z-10">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div class="relative h-48 w-full overflow-hidden bg-slate-950">
+        <img id="modalCover" class="w-full h-full object-cover blur-sm opacity-40 scale-105" alt="Fondo">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#171b28] via-transparent"></div>
+        <div class="absolute bottom-4 left-6 flex items-end gap-4">
+          <img id="modalCoverThumb" class="w-16 h-24 object-cover rounded-xl border-2 border-slate-700 shadow-xl" alt="Portada">
+          <div>
+            <h3 id="modalTitle" class="text-xl font-black text-white leading-tight"></h3>
+            <div id="modalBadges" class="flex flex-wrap gap-1.5 mt-2"></div>
+          </div>
+        </div>
+      </div>
+      <div class="p-6 space-y-4">
+        <div>
+          <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Opinión personal:</span>
+          <p id="modalReview" class="text-sm text-slate-200 leading-relaxed bg-[#101420] p-4 rounded-2xl border border-slate-800/80 italic"></p>
+        </div>
+        <div id="modalTagsContainer" class="flex flex-wrap gap-1.5"></div>
+        <div class="flex justify-between items-center pt-2 border-t border-slate-800">
+          <div class="flex items-center gap-1.5 text-amber-400 font-extrabold text-lg">
+            <i class="fa-solid fa-star"></i> <span id="modalRating"></span> <span class="text-xs text-slate-500 font-normal">/ 10</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <button id="modalEditBtn" class="px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 text-indigo-300 text-xs font-bold transition flex items-center gap-1.5">
+              <i class="fa-solid fa-pen"></i> Editar
+            </button>
+            <button id="modalDeleteBtn" class="text-xs text-rose-400 hover:text-rose-300 font-semibold flex items-center gap-1.5 transition">
+              <i class="fa-solid fa-trash"></i> Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Estadísticas -->
+  <div id="statsModal" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+    <div class="glass-card max-w-xl w-full rounded-3xl p-6 sm:p-8 border border-slate-700 shadow-2xl relative space-y-6">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+        <h3 class="text-xl font-black text-white flex items-center gap-2">
+          <i class="fa-solid fa-chart-pie text-indigo-400"></i> Estadísticas de Jugador
+        </h3>
+        <button id="closeStatsModalBtn" class="text-slate-400 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="bg-[#121623] p-3 rounded-2xl border border-slate-800">
+          <span class="text-xs text-slate-400 font-semibold block">Tasa Terminado</span>
+          <span class="text-xl font-black text-emerald-400 mt-1 block" id="statCompletionRate">0%</span>
+        </div>
+        <div class="bg-[#121623] p-3 rounded-2xl border border-slate-800">
+          <span class="text-xs text-slate-400 font-semibold block">Horas Promedio</span>
+          <span class="text-xl font-black text-indigo-400 mt-1 block" id="statAvgHours">0h</span>
+        </div>
+        <div class="bg-[#121623] p-3 rounded-2xl border border-slate-800">
+          <span class="text-xs text-slate-400 font-semibold block">Plataforma Top</span>
+          <span class="text-base font-black text-blue-400 mt-1 block truncate" id="statTopPlatform">-</span>
+        </div>
+        <div class="bg-[#121623] p-3 rounded-2xl border border-slate-800">
+          <span class="text-xs text-slate-400 font-semibold block">Obras Maestras (9+)</span>
+          <span class="text-xl font-black text-amber-400 mt-1 block" id="statMasterpieces">0</span>
+        </div>
+      </div>
+
+      <div>
+        <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">Desglose de Biblioteca</span>
+        <div id="statusBarBreakdown" class="h-4 w-full rounded-full bg-slate-800 flex overflow-hidden"></div>
+        <div id="statusBarLegend" class="flex flex-wrap gap-3 mt-2 text-[11px] text-slate-400"></div>
+      </div>
+
+      <div>
+        <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block mb-2">Juegos por Plataforma</span>
+        <div id="platformBreakdownList" class="space-y-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Generador Top 5 Image -->
+  <div id="top5Modal" class="fixed inset-0 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 z-50 hidden">
+    <div class="glass-card max-w-2xl w-full rounded-3xl p-6 sm:p-8 border border-slate-700 shadow-2xl relative space-y-6">
+      <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+        <div>
+          <h3 class="text-xl font-black text-white flex items-center gap-2">
+            <i class="fa-solid fa-camera-retro text-amber-400"></i> Mi Top 5 Personal
+          </h3>
+          <p class="text-xs text-slate-400">Genera una tarjeta gráfica de tus mejores juegos lista para compartir</p>
+        </div>
+        <button id="closeTop5ModalBtn" class="text-slate-400 hover:text-white text-lg">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="flex justify-center bg-[#07090e] p-4 rounded-2xl border border-slate-800 overflow-x-auto">
+        <canvas id="top5Canvas" width="800" height="450" class="max-w-full rounded-xl shadow-2xl border border-slate-800"></canvas>
+      </div>
+
+      <div class="flex justify-end gap-3">
+        <button id="downloadTop5Btn" class="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-extrabold text-xs rounded-xl shadow-lg transition flex items-center gap-2">
+          <i class="fa-solid fa-download"></i> Descargar Imagen (PNG)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentSelectedCover = "";
+    let activeStatus = "completed";
+    let activePlatforms = ["PC"];
+    let isFavorite = false;
+    let editingGameId = null;
+    let currentFilter = "all";
+    let activeModalGameId = null;
+
+    const gameSearch = document.getElementById("gameSearch");
+    const searchBtn = document.getElementById("searchBtn");
+    const searchBtnText = document.getElementById("searchBtnText");
+    const searchIcon = document.getElementById("searchIcon");
+    const searchResults = document.getElementById("searchResults");
+    const coverPreview = document.getElementById("coverPreview");
+    const posterIcon = document.getElementById("posterIcon");
+    const coverStatusText = document.getElementById("coverStatusText");
+    const manualCoverBtn = document.getElementById("manualCoverBtn");
+    const scoreRange = document.getElementById("scoreRange");
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const gameHours = document.getElementById("gameHours");
+    const gameTags = document.getElementById("gameTags");
+    const gameNotes = document.getElementById("gameNotes");
+    const favoriteToggleBtn = document.getElementById("favoriteToggleBtn");
+    const favText = document.getElementById("favText");
+    const saveGameBtn = document.getElementById("saveGameBtn");
+    const saveBtnText = document.getElementById("saveBtnText");
+    const cancelEditBtn = document.getElementById("cancelEditBtn");
+    const formTitle = document.getElementById("formTitle");
+    const formSubtitle = document.getElementById("formSubtitle");
+    const formIconBox = document.getElementById("formIconBox");
+    const formIcon = document.getElementById("formIcon");
+    const gamesGrid = document.getElementById("gamesGrid");
+    const filterInput = document.getElementById("filterInput");
+    const sortBySelect = document.getElementById("sortBySelect");
+
+    const nowPlayingSection = document.getElementById("nowPlayingSection");
+    const npCover = document.getElementById("npCover");
+    const npTitle = document.getElementById("npTitle");
+    const npMeta = document.getElementById("npMeta");
+    const npActionBtn = document.getElementById("npActionBtn");
+
+    function generateSmartPoster(title) {
+      const colors = ['#2e1065', '#1e1b4b', '#0f172a', '#172554', '#064e3b', '#450a0a'];
+      const hash = title.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+      const bg = colors[Math.abs(hash) % colors.length];
+      const displayTitle = title.length > 22 ? title.substring(0, 20) + '...' : title;
+
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420">
+          <defs>
+            <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${bg}" />
+              <stop offset="100%" stop-color="#020617" />
+            </linearGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#bgGrad)" />
+          <circle cx="150" cy="170" r="48" fill="rgba(255,255,255,0.06)" />
+          <path d="M130 170 h40 M150 150 v40" stroke="rgba(255,255,255,0.4)" stroke-width="5" stroke-linecap="round" />
+          <text x="150" y="270" font-family="system-ui, sans-serif" font-weight="800" font-size="18" fill="#ffffff" text-anchor="middle">${displayTitle}</text>
+          <text x="150" y="295" font-family="system-ui, sans-serif" font-weight="600" font-size="10" fill="#94a3b8" letter-spacing="2" text-anchor="middle">VIDEO GAME</text>
+        </svg>
+      `;
+      return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+    }
+
+    const statusBtns = document.querySelectorAll(".status-btn");
+    function setStatus(val) {
+      activeStatus = val;
+      statusBtns.forEach(btn => {
+        if (btn.dataset.val === val) {
+          btn.className = "status-btn p-2 rounded-xl border border-indigo-500 bg-indigo-500/20 text-white text-center font-bold text-xs shadow-lg transition";
+        } else {
+          btn.className = "status-btn p-2 rounded-xl border border-slate-700 bg-[#121623] text-slate-400 text-center font-bold text-xs hover:border-slate-600 transition";
+        }
+      });
+    }
+    statusBtns.forEach(btn => {
+      btn.addEventListener("click", () => setStatus(btn.dataset.val));
+    });
+
+    const platBtns = document.querySelectorAll(".plat-btn");
+    platBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const plat = btn.dataset.platform;
+        if (activePlatforms.includes(plat)) {
+          if (activePlatforms.length > 1) {
+            activePlatforms = activePlatforms.filter(p => p !== plat);
+            btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623] text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5";
+          }
+        } else {
+          activePlatforms.push(plat);
+          btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5";
+        }
+      });
+    });
+
+    function setPlatformBadges(plats) {
+      activePlatforms = plats && plats.length ? plats : ["PC"];
+      platBtns.forEach(btn => {
+        if (activePlatforms.includes(btn.dataset.platform)) {
+          btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5";
+        } else {
+          btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623] text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5";
+        }
+      });
+    }
+
+    favoriteToggleBtn.addEventListener("click", () => {
+      isFavorite = !isFavorite;
+      updateFavoriteUI();
+    });
+
+    function updateFavoriteUI() {
+      if (isFavorite) {
+        favoriteToggleBtn.className = "w-full sm:w-auto px-4 py-2 rounded-xl border border-amber-500 bg-amber-500/20 text-amber-300 shadow-lg shadow-amber-500/20 transition flex items-center justify-center gap-2 text-xs font-bold";
+        favText.innerText = "¡Es Favorito!";
+      } else {
+        favoriteToggleBtn.className = "w-full sm:w-auto px-4 py-2 rounded-xl border border-slate-700 bg-[#121623] text-slate-400 hover:border-amber-500/50 hover:text-amber-400 transition flex items-center justify-center gap-2 text-xs font-bold";
+        favText.innerText = "Marcar como Favorito";
+      }
+    }
+
+    scoreRange.addEventListener("input", (e) => {
+      scoreDisplay.innerText = parseFloat(e.target.value).toFixed(1);
+    });
+
+    manualCoverBtn.addEventListener("click", () => {
+      const url = prompt("Pega aquí el enlace de la imagen:");
+      if (url && url.trim().startsWith("http")) {
+        currentSelectedCover = url.trim();
+        coverPreview.src = currentSelectedCover;
+        coverPreview.classList.remove("hidden");
+        posterIcon.classList.add("hidden");
+        coverStatusText.innerText = "Portada manual lista";
+      }
+    });
+
+    window.handleWikiResults = function(data) {
+      searchIcon.className = "fa-solid fa-magnifying-glass";
+      searchBtnText.innerText = "Buscar";
+
+      let items = [];
+      if (data && data.query && data.query.pages) {
+        items = Object.values(data.query.pages).map(p => ({
+          title: p.title.replace(/\s*\(.*video game.*\)/i, "").trim(),
+          image: p.thumbnail ? p.thumbnail.source : null,
+          desc: p.description || "Videojuego"
+        }));
+      }
+      renderSearchResults(items, gameSearch.value.trim());
+    };
+
+    function triggerSearch(term) {
+      if (!term || term.length < 2) return;
+      searchIcon.className = "fa-solid fa-spinner fa-spin";
+      searchBtnText.innerText = "...";
+
+      const oldScript = document.getElementById("jsonp-search");
+      if (oldScript) oldScript.remove();
+
+      const script = document.createElement("script");
+      script.id = "jsonp-search";
+      const query = encodeURIComponent(term + " video game");
+      script.src = `https://en.wikipedia.org/w/api.php?action=query&format=json&generator=search&gsrsearch=${query}&gsrlimit=6&prop=pageimages|description&piprop=thumbnail&pithumbsize=400&callback=handleWikiResults`;
+      
+      script.onerror = () => {
+        searchIcon.className = "fa-solid fa-magnifying-glass";
+        searchBtnText.innerText = "Buscar";
+        renderSearchResults([], term);
+      };
+
+      document.body.appendChild(script);
+    }
+
+    function renderSearchResults(items, originalQuery) {
+      searchResults.innerHTML = "";
+
+      const directLi = document.createElement("li");
+      directLi.className = "flex items-center gap-3 p-3 bg-indigo-950/50 hover:bg-indigo-900/70 cursor-pointer transition text-indigo-300 font-semibold text-xs";
+      directLi.innerHTML = `<i class="fa-solid fa-check-circle"></i> Usar "${originalQuery}" directamente`;
+      directLi.addEventListener("click", () => {
+        gameSearch.value = originalQuery;
+        currentSelectedCover = generateSmartPoster(originalQuery);
+        coverPreview.src = currentSelectedCover;
+        coverPreview.classList.remove("hidden");
+        posterIcon.classList.add("hidden");
+        coverStatusText.innerText = originalQuery;
+        searchResults.classList.add("hidden");
+      });
+      searchResults.appendChild(directLi);
+
+      items.forEach(item => {
+        const li = document.createElement("li");
+        li.className = "flex items-center gap-3 p-2.5 hover:bg-slate-800/90 cursor-pointer transition";
+        const thumb = item.image || generateSmartPoster(item.title);
+        li.innerHTML = `
+          <img src="${thumb}" class="w-10 h-14 object-cover rounded-lg shadow shrink-0 bg-slate-950">
+          <div class="overflow-hidden">
+            <p class="text-xs font-bold text-white truncate">${item.title}</p>
+            <p class="text-[11px] text-slate-400 mt-0.5 truncate">${item.desc}</p>
+          </div>
+        `;
+        li.addEventListener("click", () => {
+          gameSearch.value = item.title;
+          currentSelectedCover = item.image || generateSmartPoster(item.title);
+          coverPreview.src = currentSelectedCover;
+          coverPreview.classList.remove("hidden");
+          posterIcon.classList.add("hidden");
+          coverStatusText.innerText = item.title;
+          searchResults.classList.add("hidden");
+        });
+        searchResults.appendChild(li);
+      });
+
+      searchResults.classList.remove("hidden");
+    }
+
+    searchBtn.addEventListener("click", () => triggerSearch(gameSearch.value.trim()));
+    gameSearch.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        triggerSearch(gameSearch.value.trim());
+      }
+    });
+
+    let debounceTimer;
+    gameSearch.addEventListener("input", (e) => {
+      clearTimeout(debounceTimer);
+      const val = e.target.value.trim();
+      if (val.length >= 2) {
+        debounceTimer = setTimeout(() => triggerSearch(val), 350);
+      } else {
+        searchResults.classList.add("hidden");
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!gameSearch.contains(e.target) && !searchResults.contains(e.target) && !searchBtn.contains(e.target)) {
+        searchResults.classList.add("hidden");
+      }
+    });
+
+    function getLibrary() {
+      try {
+        return JSON.parse(localStorage.getItem("game_vault_records") || "[]");
+      } catch (err) {
+        return [];
+      }
+    }
+
+    function saveLibrary(data) {
+      localStorage.setItem("game_vault_records", JSON.stringify(data));
+      renderLibrary();
+    }
+
+    function resetForm() {
+      editingGameId = null;
+      formTitle.innerText = "Añadir Título";
+      formSubtitle.innerText = "Registra un juego completado, en proceso o en pausa";
+      formIconBox.className = "w-10 h-10 rounded-xl bg-indigo-600/20 text-indigo-400 flex items-center justify-center border border-indigo-500/30 text-lg";
+      formIcon.className = "fa-solid fa-plus";
+      saveBtnText.innerText = "Guardar en mi estante";
+      cancelEditBtn.classList.add("hidden");
+
+      gameSearch.value = "";
+      currentSelectedCover = "";
+      coverPreview.classList.add("hidden");
+      posterIcon.classList.remove("hidden");
+      coverStatusText.innerText = "Sin carátula (se genera al guardar)";
+      setStatus("completed");
+      setPlatformBadges(["PC"]);
+      isFavorite = false;
+      updateFavoriteUI();
+      scoreRange.value = 9;
+      scoreDisplay.innerText = "9.0";
+      gameHours.value = "";
+      gameTags.value = "";
+      gameNotes.value = "";
+    }
+
+    cancelEditBtn.addEventListener("click", resetForm);
+
+    function startEditGame(game) {
+      editingGameId = game.id;
+      formTitle.innerText = `Editando: ${game.title}`;
+      formSubtitle.innerText = "Modifica los datos y pulsa Actualizar registro";
+      formIconBox.className = "w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center border border-amber-500/30 text-lg";
+      formIcon.className = "fa-solid fa-pen";
+      saveBtnText.innerText = "Actualizar registro";
+      cancelEditBtn.classList.remove("hidden");
+
+      gameSearch.value = game.title;
+      currentSelectedCover = game.coverUrl;
+      coverPreview.src = game.coverUrl;
+      coverPreview.classList.remove("hidden");
+      posterIcon.classList.add("hidden");
+      coverStatusText.innerText = game.title;
+
+      setStatus(game.status || "completed");
+      setPlatformBadges(game.platforms || ["PC"]);
+      isFavorite = !!game.favorite;
+      updateFavoriteUI();
+
+      scoreRange.value = game.rating || 8;
+      scoreDisplay.innerText = (game.rating || 8).toFixed(1);
+      gameHours.value = game.hours || "";
+      gameTags.value = (game.tags || []).join(", ");
+      gameNotes.value = game.notes || "";
+
+      document.getElementById("formSection").scrollIntoView({ behavior: 'smooth' });
+    }
+
+    saveGameBtn.addEventListener("click", () => {
+      const title = gameSearch.value.trim();
+      if (!title) {
+        alert("Por favor escribe el nombre del videojuego.");
+        gameSearch.focus();
+        return;
+      }
+
+      const finalCover = currentSelectedCover || generateSmartPoster(title);
+      const parsedTags = gameTags.value
+        .split(",")
+        .map(t => t.trim())
+        .filter(t => t.length > 0)
+        .map(t => t.startsWith("#") ? t : "#" + t);
+
+      const lib = getLibrary();
+
+      if (editingGameId) {
+        const index = lib.findIndex(g => g.id === editingGameId);
+        if (index !== -1) {
+          lib[index] = {
+            ...lib[index],
+            title: title,
+            coverUrl: finalCover,
+            status: activeStatus,
+            platforms: [...activePlatforms],
+            rating: parseFloat(scoreRange.value),
+            hours: parseInt(gameHours.value, 10) || 0,
+            favorite: isFavorite,
+            tags: parsedTags,
+            notes: gameNotes.value.trim()
+          };
+        }
+      } else {
+        const newGame = {
+          id: Date.now(),
+          title: title,
+          coverUrl: finalCover,
+          status: activeStatus,
+          platforms: [...activePlatforms],
+          rating: parseFloat(scoreRange.value),
+          hours: parseInt(gameHours.value, 10) || 0,
+          favorite: isFavorite,
+          tags: parsedTags,
+          notes: gameNotes.value.trim()
+        };
+        lib.unshift(newGame);
+      }
+
+      saveLibrary(lib);
+      resetForm();
+    });
+
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-btn").forEach(b => {
+          b.className = "filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#141824] text-slate-400 border border-slate-800 hover:border-slate-700 transition";
+        });
+        btn.className = "filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white transition";
+        currentFilter = btn.dataset.filter;
+        renderLibrary();
+      });
+    });
+
+    filterInput.addEventListener("input", () => renderLibrary());
+    sortBySelect.addEventListener("change", () => renderLibrary());
+
+    function renderLibrary() {
+      const lib = getLibrary();
+      const term = filterInput.value.toLowerCase().trim();
+      const sortBy = sortBySelect.value;
+
+      const playingCount = lib.filter(g => g.status === 'playing').length;
+      const completedCount = lib.filter(g => g.status === 'completed' || g.status === 'extras' || g.status === 'platinum').length;
+      const platinumCount = lib.filter(g => g.status === 'platinum').length;
+      const totalHours = lib.reduce((acc, g) => acc + (g.hours || 0), 0);
+
+      document.getElementById("statPlaying").innerText = playingCount;
+      document.getElementById("statCompleted").innerText = completedCount;
+      document.getElementById("statPlatinum").innerText = platinumCount;
+      document.getElementById("statHours").innerText = totalHours > 0 ? `${totalHours}h` : "0h";
+
+      if (lib.length > 0) {
+        const avg = lib.reduce((acc, g) => acc + g.rating, 0) / lib.length;
+        document.getElementById("statAvg").innerText = avg.toFixed(1);
+      } else {
+        document.getElementById("statAvg").innerText = "0.0";
+      }
+
+      const currentPlayingGame = lib.find(g => g.status === 'playing');
+      if (currentPlayingGame) {
+        npCover.src = currentPlayingGame.coverUrl;
+        npTitle.innerText = currentPlayingGame.title;
+        npMeta.innerText = `${(currentPlayingGame.platforms || []).join(", ")} • ${currentPlayingGame.hours || 0} hrs dedicadas`;
+        nowPlayingSection.classList.remove("hidden");
+        npActionBtn.onclick = () => startEditGame(currentPlayingGame);
+      } else {
+        nowPlayingSection.classList.add("hidden");
+      }
+
+      let filtered = [...lib];
+      if (currentFilter !== "all") {
+        if (currentFilter === "favorite") {
+          filtered = filtered.filter(g => g.favorite);
+        } else if (currentFilter === "completed") {
+          filtered = filtered.filter(g => g.status === 'completed' || g.status === 'extras' || g.status === 'platinum');
+        } else {
+          filtered = filtered.filter(g => g.status === currentFilter);
+        }
+      }
+
+      if (term) {
+        filtered = filtered.filter(g => 
+          g.title.toLowerCase().includes(term) || 
+          (g.platforms && g.platforms.some(p => p.toLowerCase().includes(term))) ||
+          (g.tags && g.tags.some(t => t.toLowerCase().includes(term)))
+        );
+      }
+
+      if (sortBy === 'rating-desc') {
+        filtered.sort((a, b) => b.rating - a.rating);
+      } else if (sortBy === 'rating-asc') {
+        filtered.sort((a, b) => a.rating - b.rating);
+      } else if (sortBy === 'hours-desc') {
+        filtered.sort((a, b) => (b.hours || 0) - (a.hours || 0));
+      } else if (sortBy === 'title-asc') {
+        filtered.sort((a, b) => a.title.localeCompare(b.title));
+      } else {
+        filtered.sort((a, b) => b.id - a.id);
+      }
+
+      gamesGrid.innerHTML = "";
+
+      if (filtered.length === 0) {
+        gamesGrid.innerHTML = `
+          <div class="col-span-full py-16 text-center glass rounded-3xl border border-slate-800">
+            <i class="fa-solid fa-gamepad text-5xl text-slate-600 mb-3 block"></i>
+            <p class="text-sm font-semibold text-slate-400">No hay juegos en esta vista.</p>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(game => {
+        const card = document.createElement("div");
+        card.className = "glass-card rounded-2xl overflow-hidden flex flex-col group hover:border-indigo-500/70 transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer relative shadow-xl";
+
+        let badgeHtml = '';
+        if (game.status === 'playing') {
+          badgeHtml = `<span class="badge-playing text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire"></i> Jugando</span>`;
+        } else if (game.status === 'platinum') {
+          badgeHtml = `<span class="badge-platinum text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-trophy"></i> 100%</span>`;
+        } else if (game.status === 'extras') {
+          badgeHtml = `<span class="badge-extras text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-star-half-stroke"></i> Extras</span>`;
+        } else if (game.status === 'onhold') {
+          badgeHtml = `<span class="badge-onhold text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-pause"></i> En Pausa</span>`;
+        } else {
+          badgeHtml = `<span class="badge-completed text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-check"></i> Pasado</span>`;
+        }
+
+        const favBadge = game.favorite ? `<div class="absolute top-2.5 right-11 z-10 w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center text-xs shadow-md"><i class="fa-solid fa-crown"></i></div>` : '';
+
+        const platformIcons = (game.platforms || []).map(p => {
+          if (p === 'PC') return '<i class="fa-brands fa-windows text-blue-400" title="PC"></i>';
+          if (p === 'PlayStation') return '<i class="fa-brands fa-playstation text-blue-500" title="PlayStation"></i>';
+          if (p === 'Xbox') return '<i class="fa-brands fa-xbox text-emerald-500" title="Xbox"></i>';
+          if (p === 'Nintendo') return '<i class="fa-solid fa-gamepad text-red-500" title="Nintendo"></i>';
+          return '<i class="fa-solid fa-ghost text-purple-400" title="Retro"></i>';
+        }).join(" ");
+
+        const hoursDisplay = game.hours ? `<span class="text-[10px] text-slate-300 font-semibold bg-black/60 px-1.5 py-0.5 rounded border border-white/10"><i class="fa-regular fa-clock mr-1 text-slate-400"></i>${game.hours}h</span>` : '';
+
+        card.innerHTML = `
+          <div class="relative aspect-[3/4] overflow-hidden bg-slate-950">
+            <img src="${game.coverUrl}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='${generateSmartPoster(game.title)}'">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#121623] via-transparent to-transparent opacity-85"></div>
+            
+            <div class="absolute top-2.5 left-2.5 z-10">
+              ${badgeHtml}
+            </div>
+
+            ${favBadge}
+
+            <div class="absolute top-2.5 right-2.5 z-10 bg-black/80 backdrop-blur-md px-2 py-0.5 rounded-lg border border-white/10 text-amber-400 font-black text-xs flex items-center gap-1 shadow">
+              <i class="fa-solid fa-star text-[10px]"></i> ${game.rating.toFixed(1)}
+            </div>
+
+            <div class="absolute bottom-2.5 left-2.5 right-2.5 z-10 flex justify-between items-center text-xs drop-shadow-md">
+              <div class="flex gap-2">${platformIcons}</div>
+              ${hoursDisplay}
+            </div>
+          </div>
+
+          <div class="p-3.5 flex flex-col justify-between flex-1 gap-2">
+            <div>
+              <h3 class="font-bold text-xs sm:text-sm text-slate-100 line-clamp-1 group-hover:text-indigo-300 transition" title="${game.title}">${game.title}</h3>
+              ${game.tags && game.tags.length ? `
+                <div class="flex flex-wrap gap-1 mt-1">
+                  ${game.tags.slice(0, 2).map(t => `<span class="text-[9px] text-indigo-400 font-medium">${t}</span>`).join(" ")}
+                </div>
+              ` : ''}
+            </div>
+            ${game.notes ? `<p class="text-[11px] text-slate-400 line-clamp-2 italic bg-[#0f121d] p-2 rounded-lg border border-slate-800/80">"${game.notes}"</p>` : ''}
+          </div>
+        `;
+
+        card.addEventListener("click", () => openDetailModal(game));
+        gamesGrid.appendChild(card);
+      });
+    }
+
+    const detailModal = document.getElementById("detailModal");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const modalCover = document.getElementById("modalCover");
+    const modalCoverThumb = document.getElementById("modalCoverThumb");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalBadges = document.getElementById("modalBadges");
+    const modalReview = document.getElementById("modalReview");
+    const modalRating = document.getElementById("modalRating");
+    const modalTagsContainer = document.getElementById("modalTagsContainer");
+    const modalEditBtn = document.getElementById("modalEditBtn");
+    const modalDeleteBtn = document.getElementById("modalDeleteBtn");
+
+    function openDetailModal(game) {
+      activeModalGameId = game.id;
+      modalCover.src = game.coverUrl;
+      modalCoverThumb.src = game.coverUrl;
+      modalTitle.innerText = game.title;
+      modalRating.innerText = game.rating.toFixed(1);
+      modalReview.innerText = game.notes || "Sin reseña escrita.";
+
+      let statusBadge = game.status === 'playing' ? '🔥 Jugando actualmente' : 
+                        (game.status === 'platinum' ? '🏆 Platinado / 100%' : 
+                        (game.status === 'extras' ? '⭐ Campaña + Extras' : 
+                        (game.status === 'onhold' ? '⏸️ En Pausa' : '✅ Historia Principal')));
+
+      modalBadges.innerHTML = `
+        <span class="px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded text-[11px] border border-indigo-500/30">${statusBadge}</span>
+        <span class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-[11px]">${(game.platforms || []).join(", ")}</span>
+        ${game.hours ? `<span class="px-2 py-0.5 bg-slate-800 text-slate-300 rounded text-[11px]"><i class="fa-regular fa-clock mr-1"></i>${game.hours}h</span>` : ''}
+      `;
+
+      if (game.tags && game.tags.length) {
+        modalTagsContainer.innerHTML = game.tags.map(t => `<span class="text-[10px] px-2 py-0.5 bg-indigo-950/60 border border-indigo-500/30 text-indigo-300 rounded-md font-medium">${t}</span>`).join(" ");
+      } else {
+        modalTagsContainer.innerHTML = '';
+      }
+
+      detailModal.classList.remove("hidden");
+    }
+
+    closeModalBtn.addEventListener("click", () => detailModal.classList.add("hidden"));
+    detailModal.addEventListener("click", (e) => {
+      if (e.target === detailModal) detailModal.classList.add("hidden");
+    });
+
+    modalEditBtn.addEventListener("click", () => {
+      const lib = getLibrary();
+      const target = lib.find(g => g.id === activeModalGameId);
+      if (target) {
+        detailModal.classList.add("hidden");
+        startEditGame(target);
+      }
+    });
+
+    modalDeleteBtn.addEventListener("click", () => {
+      if (confirm("¿Seguro que deseas eliminar este juego de tu colección?")) {
+        const lib = getLibrary().filter(g => g.id !== activeModalGameId);
+        saveLibrary(lib);
+        detailModal.classList.add("hidden");
+      }
+    });
+
+    const statsModal = document.getElementById("statsModal");
+    const openStatsBtn = document.getElementById("openStatsBtn");
+    const closeStatsModalBtn = document.getElementById("closeStatsModalBtn");
+
+    openStatsBtn.addEventListener("click", () => {
+      const lib = getLibrary();
+      if (lib.length === 0) {
+        alert("Agrega algunos juegos primero para ver las estadísticas.");
+        return;
+      }
+
+      const completed = lib.filter(g => ['completed', 'extras', 'platinum'].includes(g.status)).length;
+      const rate = Math.round((completed / lib.length) * 100);
+      document.getElementById("statCompletionRate").innerText = `${rate}%`;
+
+      const gamesWithHours = lib.filter(g => g.hours && g.hours > 0);
+      const avgHours = gamesWithHours.length ? Math.round(gamesWithHours.reduce((acc, g) => acc + g.hours, 0) / gamesWithHours.length) : 0;
+      document.getElementById("statAvgHours").innerText = `${avgHours}h`;
+
+      const masters = lib.filter(g => g.rating >= 9).length;
+      document.getElementById("statMasterpieces").innerText = masters;
+
+      const platCounts = {};
+      lib.forEach(g => {
+        (g.platforms || []).forEach(p => {
+          platCounts[p] = (platCounts[p] || 0) + 1;
+        });
+      });
+      let topPlat = "-";
+      let topCount = 0;
+      for (const [p, count] of Object.entries(platCounts)) {
+        if (count > topCount) {
+          topCount = count;
+          topPlat = p;
+        }
+      }
+      document.getElementById("statTopPlatform").innerText = topPlat;
+
+      const playing = lib.filter(g => g.status === 'playing').length;
+      const onhold = lib.filter(g => g.status === 'onhold').length;
+
+      const pPlaying = (playing / lib.length) * 100;
+      const pCompleted = (completed / lib.length) * 100;
+      const pOnhold = (onhold / lib.length) * 100;
+
+      const statusBar = document.getElementById("statusBarBreakdown");
+      statusBar.innerHTML = `
+        <div style="width: ${pCompleted}%" class="bg-emerald-500 h-full" title="Completados"></div>
+        <div style="width: ${pPlaying}%" class="bg-orange-500 h-full" title="Jugando"></div>
+        <div style="width: ${pOnhold}%" class="bg-yellow-500 h-full" title="En Pausa"></div>
+      `;
+
+      document.getElementById("statusBarLegend").innerHTML = `
+        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ${completed} Pasados</span>
+        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> ${playing} Jugando</span>
+        <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-yellow-500"></span> ${onhold} En Pausa</span>
+      `;
+
+      const platList = document.getElementById("platformBreakdownList");
+      platList.innerHTML = Object.entries(platCounts).map(([plat, count]) => {
+        const perc = Math.round((count / lib.length) * 100);
+        return `
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-300 font-semibold">${plat}</span>
+            <div class="flex items-center gap-2">
+              <div class="w-28 bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div class="bg-indigo-500 h-full" style="width: ${perc}%"></div>
+              </div>
+              <span class="text-slate-400 font-bold w-6 text-right">${count}</span>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      statsModal.classList.remove("hidden");
+    });
+
+    closeStatsModalBtn.addEventListener("click", () => statsModal.classList.add("hidden"));
+    statsModal.addEventListener("click", (e) => {
+      if (e.target === statsModal) statsModal.classList.add("hidden");
+    });
+
+    const top5Modal = document.getElementById("top5Modal");
+    const openTop5Btn = document.getElementById("openTop5Btn");
+    const closeTop5ModalBtn = document.getElementById("closeTop5ModalBtn");
+    const downloadTop5Btn = document.getElementById("downloadTop5Btn");
+    const top5Canvas = document.getElementById("top5Canvas");
+
+    openTop5Btn.addEventListener("click", () => {
+      const lib = getLibrary();
+      if (lib.length === 0) {
+        alert("Agrega juegos a tu estante primero.");
+        return;
+      }
+
+      const top5 = [...lib].sort((a, b) => b.rating - a.rating).slice(0, 5);
+      drawTop5Canvas(top5);
+      top5Modal.classList.remove("hidden");
+    });
+
+    closeTop5ModalBtn.addEventListener("click", () => top5Modal.classList.add("hidden"));
+    top5Modal.addEventListener("click", (e) => {
+      if (e.target === top5Modal) top5Modal.classList.add("hidden");
+    });
+
+    function drawTop5Canvas(games) {
+      const ctx = top5Canvas.getContext("2d");
+      const w = top5Canvas.width;
+      const h = top5Canvas.height;
+
+      const bgGrad = ctx.createRadialGradient(w * 0.8, 0, 50, w * 0.5, h * 0.5, w);
+      bgGrad.addColorStop(0, "#1e1b4b");
+      bgGrad.addColorStop(0.5, "#0b0e17");
+      bgGrad.addColorStop(1, "#030712");
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 24px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("MY ALL-TIME TOP 5 GAMES", 35, 45);
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "12px 'Plus Jakarta Sans', sans-serif";
+      ctx.fillText("Game Showcase • Personal Vault", 35, 68);
+
+      const cardWidth = 135;
+      const cardHeight = 200;
+      const startX = 35;
+      const startY = 100;
+      const gap = 18;
+
+      games.forEach((g, i) => {
+        const x = startX + i * (cardWidth + gap);
+        const y = startY;
+
+        ctx.fillStyle = "#161c2d";
+        ctx.strokeStyle = "#334155";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(x, y, cardWidth, cardHeight, 12);
+        ctx.fill();
+        ctx.stroke();
+
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.src = g.coverUrl;
+        img.onload = () => {
+          ctx.save();
+          ctx.beginPath();
+          ctx.roundRect(x, y, cardWidth, cardHeight - 50, [12, 12, 0, 0]);
+          ctx.clip();
+          ctx.drawImage(img, x, y, cardWidth, cardHeight - 50);
+          ctx.restore();
+        };
+
+        ctx.fillStyle = "#000000dd";
+        ctx.beginPath();
+        ctx.roundRect(x + cardWidth - 45, y + 8, 38, 20, 6);
+        ctx.fill();
+
+        ctx.fillStyle = "#fbbf24";
+        ctx.font = "bold 11px sans-serif";
+        ctx.fillText(`★ ${g.rating.toFixed(1)}`, x + cardWidth - 40, y + 22);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 12px sans-serif";
+        const shortTitle = g.title.length > 15 ? g.title.slice(0, 14) + "..." : g.title;
+        ctx.fillText(shortTitle, x + 8, y + cardHeight - 28);
+
+        ctx.fillStyle = "#818cf8";
+        ctx.font = "bold 10px sans-serif";
+        ctx.fillText(`#${i + 1} • ${(g.platforms || ['PC'])[0]}`, x + 8, y + cardHeight - 12);
+      });
+    }
+
+    downloadTop5Btn.addEventListener("click", () => {
+      const link = document.createElement("a");
+      link.download = `my_top_5_games.png`;
+      link.href = top5Canvas.toDataURL("image/png");
+      link.click();
+    });
+
+    document.getElementById("exportBtn").addEventListener("click", () => {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(localStorage.getItem("game_vault_records") || "[]");
+      const dlAnchor = document.createElement('a');
+      dlAnchor.setAttribute("href", dataStr);
+      dlAnchor.setAttribute("download", `mis_juegos_backup_${new Date().toISOString().slice(0,10)}.json`);
+      dlAnchor.click();
+    });
+
+    document.getElementById("importBtn").addEventListener("click", () => {
+      document.getElementById("fileInput").click();
+    });
+
+    document.getElementById("fileInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          if (Array.isArray(parsed)) {
+            localStorage.setItem("game_vault_records", JSON.stringify(parsed));
+            renderLibrary();
+            alert("¡Colección importada con éxito!");
+          }
+        } catch(err) {
+          alert("El archivo subido no es un JSON válido.");
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // 16. Funcionalidad Demo y Limpieza
+    document.getElementById("loadDemoBtn").addEventListener("click", () => {
+      const demoGames = [
+        {
+          id: Date.now() - 10000,
+          title: "Elden Ring",
+          coverUrl: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=400&q=80",
+          status: "platinum",
+          platforms: ["PC"],
+          rating: 10,
+          hours: 145,
+          favorite: true,
+          tags: ["#Soulslike", "#GOTY", "#MundoAbierto"],
+          notes: "De las experiencias más completas de exploración. Platinado tras explorar cada rincón de las Tierras Intermedias."
+        },
+        {
+          id: Date.now() - 20000,
+          title: "Cyberpunk 2077",
+          coverUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=400&q=80",
+          status: "playing",
+          platforms: ["PC"],
+          rating: 9.5,
+          hours: 68,
+          favorite: true,
+          tags: ["#RPG", "#SciFi"],
+          notes: "Night City tiene una de las ambientaciones más densas de la industria. Actualmente pasando el DLC Phantom Liberty."
+        },
+        {
+          id: Date.now() - 30000,
+          title: "Hollow Knight",
+          coverUrl: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=400&q=80",
+          status: "completed",
+          platforms: ["Nintendo", "PC"],
+          rating: 9.5,
+          hours: 42,
+          favorite: false,
+          tags: ["#Metroidvania", "#Indie"],
+          notes: "Dirección de arte impecable y diseño de mapa superlativo."
+        },
+        {
+          id: Date.now() - 40000,
+          title: "Red Dead Redemption 2",
+          coverUrl: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=400&q=80",
+          status: "extras",
+          platforms: ["PlayStation"],
+          rating: 10,
+          hours: 110,
+          favorite: true,
+          tags: ["#Narrativa", "#MundoAbierto"],
+          notes: "Arthur Morgan es uno de los mejores personajes escritos en el medio."
+        }
+      ];
+
+      saveLibrary(demoGames);
+      alert("¡Datos de demostración cargados exitosamente!");
+    });
+
+    document.getElementById("clearAllBtn").addEventListener("click", () => {
+      if (confirm("¿Estás seguro de que deseas borrar toda tu biblioteca? (Recomendamos descargar un respaldo antes).")) {
+        saveLibrary([]);
+        resetForm();
+      }
+    });
+
+    // Render Inicial
+    renderLibrary();
+  </script>
+</body>
+</html>
