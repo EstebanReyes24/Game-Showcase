@@ -50,9 +50,9 @@ function setStatus(val) {
   activeStatus = val;
   statusBtns.forEach(btn => {
     if (btn.dataset.val === val) {
-      btn.className = "status-btn p-2 rounded-xl border border-indigo-500 bg-indigo-500/20 text-white text-center font-bold text-xs shadow-lg transition";
+      btn.className = "status-btn p-2 rounded-xl border border-indigo-500 bg-indigo-500/20 text-white text-center font-bold text-xs shadow-lg shadow-indigo-500/20 transition";
     } else {
-      btn.className = "status-btn p-2 rounded-xl border border-slate-700 bg-[#121623] text-slate-400 text-center font-bold text-xs hover:border-slate-600 transition";
+      btn.className = "status-btn p-2 rounded-xl border border-slate-700/80 bg-[#121623]/80 text-slate-400 text-center font-bold text-xs hover:border-slate-600 transition";
     }
   });
 }
@@ -68,11 +68,11 @@ platBtns.forEach(btn => {
     if (activePlatforms.includes(plat)) {
       if (activePlatforms.length > 1) {
         activePlatforms = activePlatforms.filter(p => p !== plat);
-        btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623] text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5";
+        btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623]/80 text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5";
       }
     } else {
       activePlatforms.push(plat);
-      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5";
+      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5 shadow-sm";
     }
   });
 });
@@ -81,9 +81,9 @@ function setPlatformBadges(plats) {
   activePlatforms = plats && plats.length ? plats : ["PC"];
   platBtns.forEach(btn => {
     if (activePlatforms.includes(btn.dataset.platform)) {
-      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5";
+      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-indigo-500 bg-indigo-500/20 text-white transition flex items-center gap-1.5 shadow-sm";
     } else {
-      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623] text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5";
+      btn.className = "plat-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-700 bg-[#121623]/80 text-slate-300 hover:border-slate-500 transition flex items-center gap-1.5";
     }
   });
 }
@@ -104,9 +104,20 @@ function updateFavoriteUI() {
   }
 }
 
-// 4. Slider de Puntuación
+// 4. Slider de Puntuación con Feedback de Color Dinámico
 scoreRange.addEventListener("input", (e) => {
-  scoreDisplay.innerText = parseFloat(e.target.value).toFixed(1);
+  const val = parseFloat(e.target.value);
+  scoreDisplay.innerText = val.toFixed(1);
+
+  if (val >= 9.0) {
+    scoreDisplay.className = "text-base font-extrabold text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]";
+  } else if (val >= 7.0) {
+    scoreDisplay.className = "text-base font-extrabold text-indigo-400";
+  } else if (val >= 5.0) {
+    scoreDisplay.className = "text-base font-extrabold text-slate-300";
+  } else {
+    scoreDisplay.className = "text-base font-extrabold text-rose-400";
+  }
 });
 
 // 5. Portada Manual
@@ -140,7 +151,7 @@ function renderSearchResults(items, originalQuery) {
   searchResults.innerHTML = "";
 
   const directLi = document.createElement("li");
-  directLi.className = "flex items-center gap-3 p-3 bg-indigo-950/50 hover:bg-indigo-900/70 cursor-pointer transition text-indigo-300 font-semibold text-xs";
+  directLi.className = "flex items-center gap-3 p-3 bg-indigo-950/60 hover:bg-indigo-900/80 cursor-pointer transition text-indigo-300 font-semibold text-xs border-b border-slate-800/80";
   directLi.innerHTML = `<i class="fa-solid fa-check-circle"></i> Usar "${originalQuery}" directamente`;
   directLi.addEventListener("click", () => {
     gameSearch.value = originalQuery;
@@ -158,7 +169,7 @@ function renderSearchResults(items, originalQuery) {
     li.className = "flex items-center gap-3 p-2.5 hover:bg-slate-800/90 cursor-pointer transition";
     const thumb = item.image || CanvasPoster.generateSmartPoster(item.title);
     li.innerHTML = `
-      <img src="${thumb}" class="w-10 h-14 object-cover rounded-lg shadow shrink-0 bg-slate-950">
+      <img src="${thumb}" class="w-10 h-14 object-cover rounded-lg shadow-md shrink-0 bg-slate-950">
       <div class="overflow-hidden">
         <p class="text-xs font-bold text-white truncate">${item.title}</p>
         <p class="text-[11px] text-slate-400 mt-0.5 truncate">${item.desc}</p>
@@ -225,6 +236,7 @@ function resetForm() {
   updateFavoriteUI();
   scoreRange.value = 9;
   scoreDisplay.innerText = "9.0";
+  scoreDisplay.className = "text-base font-extrabold text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]";
   gameHours.value = "";
   gameTags.value = "";
   gameNotes.value = "";
@@ -306,7 +318,7 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
     document.querySelectorAll(".filter-btn").forEach(b => {
       b.className = "filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-[#141824] text-slate-400 border border-slate-800 hover:border-slate-700 transition";
     });
-    btn.className = "filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white transition";
+    btn.className = "filter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-indigo-600 text-white shadow-md shadow-indigo-600/30 transition";
     currentFilter = btn.dataset.filter;
     renderLibrary();
   });
@@ -315,7 +327,7 @@ document.querySelectorAll(".filter-btn").forEach(btn => {
 filterInput.addEventListener("input", () => renderLibrary());
 sortBySelect.addEventListener("change", () => renderLibrary());
 
-// 10. Renderizado de Biblioteca
+// 10. Renderizado de Biblioteca (Cards visualmente pulidas)
 function renderLibrary() {
   const lib = StorageManager.getGames();
   const term = filterInput.value.toLowerCase().trim();
@@ -384,7 +396,7 @@ function renderLibrary() {
 
   if (filtered.length === 0) {
     gamesGrid.innerHTML = `
-      <div class="col-span-full py-16 text-center glass rounded-3xl border border-slate-800">
+      <div class="col-span-full py-20 text-center glass rounded-3xl border border-slate-800/80">
         <i class="fa-solid fa-gamepad text-5xl text-slate-600 mb-3 block"></i>
         <p class="text-sm font-semibold text-slate-400">No hay juegos en esta vista.</p>
       </div>
@@ -394,37 +406,36 @@ function renderLibrary() {
 
   filtered.forEach(game => {
     const card = document.createElement("div");
-    card.className = "glass-card rounded-2xl overflow-hidden flex flex-col group hover:border-indigo-500/70 transition-all duration-300 transform hover:-translate-y-1.5 cursor-pointer relative shadow-xl";
+    card.className = "glass-card game-card-hover rounded-2xl overflow-hidden flex flex-col group cursor-pointer relative shadow-xl";
 
     let badgeHtml = '';
     if (game.status === 'playing') {
-      badgeHtml = `<span class="badge-playing text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire"></i> Jugando</span>`;
+      badgeHtml = `<span class="badge-playing text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-fire text-orange-400"></i> Jugando</span>`;
     } else if (game.status === 'platinum') {
-      badgeHtml = `<span class="badge-platinum text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-trophy"></i> 100%</span>`;
+      badgeHtml = `<span class="badge-platinum text-[10px] font-black px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-trophy text-amber-400"></i> 100%</span>`;
     } else if (game.status === 'extras') {
-      badgeHtml = `<span class="badge-extras text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-star-half-stroke"></i> Extras</span>`;
+      badgeHtml = `<span class="badge-extras text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-star-half-stroke text-indigo-300"></i> Extras</span>`;
     } else if (game.status === 'onhold') {
       badgeHtml = `<span class="badge-onhold text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-pause"></i> En Pausa</span>`;
     } else {
       badgeHtml = `<span class="badge-completed text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"><i class="fa-solid fa-check"></i> Pasado</span>`;
     }
 
-    const favBadge = game.favorite ? `<div class="absolute top-2.5 right-11 z-10 w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center text-xs shadow-md"><i class="fa-solid fa-crown"></i></div>` : '';
+    const favBadge = game.favorite ? `<div class="absolute top-2.5 right-12 z-10 w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center text-xs shadow-md backdrop-blur-sm"><i class="fa-solid fa-crown text-[11px]"></i></div>` : '';
 
     const platformIcons = (game.platforms || []).map(p => {
       if (p === 'PC') return '<i class="fa-brands fa-windows text-blue-400" title="PC"></i>';
       if (p === 'PlayStation') return '<i class="fa-brands fa-playstation text-blue-500" title="PlayStation"></i>';
-      if (p === 'Xbox') return '<i class="fa-brands fa-xbox text-emerald-500" title="Xbox"></i>';
-      if (p === 'Nintendo') return '<i class="fa-solid fa-gamepad text-red-500" title="Nintendo"></i>';
+      if (p === 'Xbox') return '<i class="fa-brands fa-xbox text-emerald-400" title="Xbox"></i>';
+      if (p === 'Nintendo') return '<i class="fa-solid fa-gamepad text-red-400" title="Nintendo"></i>';
       return '<i class="fa-solid fa-ghost text-purple-400" title="Retro"></i>';
     }).join(" ");
 
-    const hoursDisplay = game.hours ? `<span class="text-[10px] text-slate-300 font-semibold bg-black/60 px-1.5 py-0.5 rounded border border-white/10"><i class="fa-regular fa-clock mr-1 text-slate-400"></i>${game.hours}h</span>` : '';
+    const hoursDisplay = game.hours ? `<span class="text-[10px] text-slate-300 font-semibold bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded border border-white/10"><i class="fa-regular fa-clock mr-1 text-slate-400"></i>${game.hours}h</span>` : '';
 
     card.innerHTML = `
-      <div class="relative aspect-[3/4] overflow-hidden bg-slate-950">
+      <div class="relative aspect-[3/4] overflow-hidden bg-slate-950 poster-sheen">
         <img src="${game.coverUrl}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='${CanvasPoster.generateSmartPoster(game.title)}'">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#121623] via-transparent to-transparent opacity-85"></div>
         
         <div class="absolute top-2.5 left-2.5 z-10">
           ${badgeHtml}
@@ -432,7 +443,7 @@ function renderLibrary() {
 
         ${favBadge}
 
-        <div class="absolute top-2.5 right-2.5 z-10 bg-black/80 backdrop-blur-md px-2 py-0.5 rounded-lg border border-white/10 text-amber-400 font-black text-xs flex items-center gap-1 shadow">
+        <div class="absolute top-2.5 right-2.5 z-10 bg-black/85 backdrop-blur-md px-2 py-0.5 rounded-lg border border-white/15 text-amber-400 font-black text-xs flex items-center gap-1 shadow-lg">
           <i class="fa-solid fa-star text-[10px]"></i> ${game.rating.toFixed(1)}
         </div>
 
@@ -442,16 +453,16 @@ function renderLibrary() {
         </div>
       </div>
 
-      <div class="p-3.5 flex flex-col justify-between flex-1 gap-2">
+      <div class="p-3.5 flex flex-col justify-between flex-1 gap-2 bg-gradient-to-b from-[#121623]/90 to-[#0e111c]">
         <div>
           <h3 class="font-bold text-xs sm:text-sm text-slate-100 line-clamp-1 group-hover:text-indigo-300 transition" title="${game.title}">${game.title}</h3>
           ${game.tags && game.tags.length ? `
-            <div class="flex flex-wrap gap-1 mt-1">
-              ${game.tags.slice(0, 2).map(t => `<span class="text-[9px] text-indigo-400 font-medium">${t}</span>`).join(" ")}
+            <div class="flex flex-wrap gap-1 mt-1.5">
+              ${game.tags.slice(0, 2).map(t => `<span class="text-[9px] px-1.5 py-0.5 rounded bg-indigo-950/70 border border-indigo-500/20 text-indigo-300 font-medium">${t}</span>`).join(" ")}
             </div>
           ` : ''}
         </div>
-        ${game.notes ? `<p class="text-[11px] text-slate-400 line-clamp-2 italic bg-[#0f121d] p-2 rounded-lg border border-slate-800/80">"${game.notes}"</p>` : ''}
+        ${game.notes ? `<p class="text-[11px] text-slate-400 line-clamp-2 italic bg-[#0a0d16] p-2 rounded-lg border border-slate-800/60">"${game.notes}"</p>` : ''}
       </div>
     `;
 
@@ -638,7 +649,7 @@ downloadTop5Btn.addEventListener("click", () => {
 
 // 14. Backup JSON
 document.getElementById("exportBtn").addEventListener("click", () => {
-  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(localStorage.getItem(STORAGE_KEY) || "[]");
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(localStorage.getItem("game_vault_records") || "[]");
   const dlAnchor = document.createElement('a');
   dlAnchor.setAttribute("href", dataStr);
   dlAnchor.setAttribute("download", `mis_juegos_backup_${new Date().toISOString().slice(0,10)}.json`);
@@ -681,7 +692,7 @@ document.getElementById("loadDemoBtn").addEventListener("click", () => {
       hours: 145,
       favorite: true,
       tags: ["#Soulslike", "#GOTY", "#MundoAbierto"],
-      notes: "De las experiencias más completas de exploración. Platinado tras explorar cada rincón de las Tierras Intermedias."
+      notes: "De las experiencias más completas de exploración. Platinado tras recorrer cada rincón de las Tierras Intermedias."
     },
     {
       id: Date.now() - 20000,
