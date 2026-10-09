@@ -13,14 +13,6 @@ Una aplicación web moderna, rápida y minimalista diseñada para registrar, cal
 - **💾 Copias de Seguridad:** Exporta e importa toda tu biblioteca en formato JSON con un solo clic.
 - **📱 Preparado para Móvil (PWA):** Añádelo a la pantalla de inicio de tu teléfono para usarlo a pantalla completa como una app nativa.
 
-## 🚀 Despliegue en GitHub Pages (Paso a Paso)
-
-1. Crea un repositorio público en [GitHub](https://github.com) (ej: `game-showcase`).
-2. Sube el archivo `index.html` y este `README.md`.
-3. Dirígete a la pestaña **Settings** > **Pages** dentro de tu repositorio.
-4. En **Branch**, selecciona `main` (o `master`), carpeta `/ (root)` y pulsa **Save**.
-5. En unos segundos tu aplicación estará activa en `https://<tu-usuario>.github.io/<nombre-del-repo>/`.
-
 ## 🛠️ Tecnologías Utilizadas
 
 - **HTML5 & CSS3** (Vanilla)
