@@ -1,79 +1,126 @@
-/* Estilos base y temas oscuros */
+/* ========================================================
+   GAME SHOWCASE - ULTRA REFINED THEME (OBSIDIAN & NEON)
+   ======================================================== */
+
+:root {
+  --bg-deep: #090a10;
+  --surface-card: rgba(18, 21, 33, 0.75);
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-glow: rgba(99, 102, 241, 0.35);
+  --accent-cyan: #06b6d4;
+  --accent-violet: #8b5cf6;
+  --accent-gold: #fbbf24;
+}
+
 body {
   font-family: 'Plus Jakarta Sans', sans-serif;
-  background: radial-gradient(circle at top right, #1a162b, #0c0e14 45%, #07080b);
-  color: #f1f5f9;
+  background-color: var(--bg-deep);
+  background-image: 
+    radial-gradient(at 15% 15%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+    radial-gradient(at 85% 20%, rgba(6, 182, 212, 0.08) 0px, transparent 45%),
+    radial-gradient(at 50% 90%, rgba(139, 92, 246, 0.1) 0px, transparent 60%);
+  background-attachment: fixed;
+  color: #e2e8f0;
   min-height: 100vh;
 }
 
-/* Efectos de cristal (Glassmorphism) */
+/* Glassmorphism Refinado */
 .glass {
-  background: rgba(18, 22, 34, 0.8);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(15, 18, 28, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 .glass-card {
-  background: rgba(23, 27, 40, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--surface-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-subtle);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* Insignias de Estado luminosas */
+/* Efecto Hover en las Tarjetas de Juego */
+.game-card-hover {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.35s ease, border-color 0.3s ease;
+}
+
+.game-card-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(129, 140, 248, 0.45);
+  box-shadow: 0 20px 35px -10px rgba(0, 0, 0, 0.7), 0 0 25px -5px rgba(99, 102, 241, 0.25);
+}
+
+/* Insignias de Estado con Acabado Neón Sutil */
 .badge-playing {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(249, 115, 22, 0.2));
-  border: 1px solid rgba(249, 115, 22, 0.6);
-  color: #fb923c;
-  box-shadow: 0 0 15px rgba(249, 115, 22, 0.3);
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(239, 68, 68, 0.15));
+  border: 1px solid rgba(249, 115, 22, 0.55);
+  color: #fdba74;
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.25);
 }
 
 .badge-platinum {
-  background: linear-gradient(135deg, rgba(234, 179, 8, 0.25), rgba(245, 158, 11, 0.2));
-  border: 1px solid rgba(245, 158, 11, 0.6);
-  color: #fbbf24;
-  box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.22), rgba(217, 119, 6, 0.15));
+  border: 1px solid rgba(251, 191, 36, 0.6);
+  color: #fde047;
+  box-shadow: 0 0 16px rgba(234, 179, 8, 0.3);
 }
 
 .badge-completed {
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25), rgba(5, 150, 105, 0.15));
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.12));
   border: 1px solid rgba(16, 185, 129, 0.5);
-  color: #34d399;
+  color: #6ee7b7;
 }
 
 .badge-extras {
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(79, 70, 229, 0.15));
-  border: 1px solid rgba(99, 102, 241, 0.5);
-  color: #a5b4fc;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.15));
+  border: 1px solid rgba(129, 140, 248, 0.5);
+  color: #c7d2fe;
 }
 
 .badge-onhold {
-  background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(202, 138, 4, 0.1));
-  border: 1px solid rgba(234, 179, 8, 0.4);
-  color: #fde047;
+  background: linear-gradient(135deg, rgba(234, 179, 8, 0.15), rgba(161, 98, 7, 0.1));
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  color: #fef08a;
 }
 
-/* Animación de pulso para partidas activas */
+/* Pulso dinámico para el banner Now Playing */
 .pulse-playing {
-  animation: pulseGlow 2s infinite;
+  animation: pulseNeon 3s infinite ease-in-out;
 }
 
-@keyframes pulseGlow {
-  0%, 100% { 
-    box-shadow: 0 0 15px rgba(249, 115, 22, 0.4); 
+@keyframes pulseNeon {
+  0%, 100% {
+    border-color: rgba(249, 115, 22, 0.3);
+    box-shadow: 0 0 20px -5px rgba(249, 115, 22, 0.2);
   }
-  50% { 
-    box-shadow: 0 0 30px rgba(239, 68, 68, 0.7); 
+  50% {
+    border-color: rgba(249, 115, 22, 0.6);
+    box-shadow: 0 0 35px 0px rgba(249, 115, 22, 0.35);
   }
 }
 
-/* Scrollbar estilizada */
+/* Gradiente reflectivo superior en posters */
+.poster-sheen::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 40%, rgba(9, 10, 16, 0.95) 100%);
+  pointer-events: none;
+}
+
+/* Barra de scroll limpia */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
-
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(15, 18, 28, 0.5);
+}
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #2a334a;
+  background: #334155;
   border-radius: 9999px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
